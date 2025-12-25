@@ -8,6 +8,8 @@ import Quickshell.Wayland
 Singleton {
     id: root
 
+    property var _previousApps: []
+
     function isPinned(appId) {
         return Config.options.dock.pinnedApps.indexOf(appId) !== -1;
     }
@@ -53,10 +55,22 @@ Singleton {
         var values = [];
 
         for (const [key, value] of map) {
-            values.push(appEntryComp.createObject(null, { appId: key, toplevels: value.toplevels, pinned: value.pinned }));
+            values.push(appEntryComp.createObject(root, { appId: key, toplevels: value.toplevels, pinned: value.pinned }));
         }
 
+        // Destroy old objects to prevent memory leaks
+        for (let app of _previousApps) {
+            if (app && app.destroy) app.destroy();
+        }
+        _previousApps = values.slice();
+
         return values;
+    }
+
+    Component.onDestruction: {
+        for (let app of _previousApps) {
+            if (app && app.destroy) app.destroy();
+        }
     }
 
     component TaskbarAppEntry: QtObject {

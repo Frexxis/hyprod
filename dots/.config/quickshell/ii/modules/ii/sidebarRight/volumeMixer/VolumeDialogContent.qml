@@ -52,7 +52,6 @@ ColumnLayout {
             }
         })
         onActivated: (index) => {
-            print(index)
             const item = root.devices[index]
             if (root.isSink) {
                 Audio.setDefaultSink(item)
@@ -76,10 +75,5 @@ ColumnLayout {
         clip: true
         spacing: 4
         animateAppearance: false
-    }
-
-    Component {
-        id: listElementComp
-        ListElement {}
     }
 }

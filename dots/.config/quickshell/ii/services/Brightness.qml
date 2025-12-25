@@ -19,9 +19,23 @@ Singleton {
     signal brightnessChanged()
 
     property var ddcMonitors: []
-    readonly property list<BrightnessMonitor> monitors: Quickshell.screens.map(screen => monitorComp.createObject(root, {
-        screen
-    }))
+    property var _previousMonitors: []
+    readonly property list<BrightnessMonitor> monitors: {
+        const newMonitors = Quickshell.screens.map(screen => monitorComp.createObject(root, {
+            screen
+        }));
+
+        // Destroy old monitors to prevent memory leaks
+        for (let monitor of _previousMonitors) {
+            if (monitor && monitor.destroy) {
+                if (monitor.setTimer) monitor.setTimer.stop();
+                monitor.destroy();
+            }
+        }
+        _previousMonitors = newMonitors.slice();
+
+        return newMonitors;
+    }
 
     function getMonitorForScreen(screen: ShellScreen): var {
         return monitors.find(m => m.screen === screen);
@@ -173,6 +187,15 @@ Singleton {
         id: monitorComp
 
         BrightnessMonitor {}
+    }
+
+    Component.onDestruction: {
+        for (let monitor of _previousMonitors) {
+            if (monitor && monitor.destroy) {
+                if (monitor.setTimer) monitor.setTimer.stop();
+                monitor.destroy();
+            }
+        }
     }
 
     // Anti-flashbang
