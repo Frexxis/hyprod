@@ -18,3 +18,20 @@ node_modules/
 .DS_Store
 .vscode/
 .idea/
+*~
+
+# Build artifacts
+/diagnose.result
+/.update-lock
+
+# QML
+dots/.config/quickshell/ii/.qmlls.ini
+
+# Custom os-release
+/os-release
+
+# Personal development docs (not needed for users)
+docs/
+tools/
+CLAUDE.md
+.editorconfig

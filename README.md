@@ -47,17 +47,33 @@ yay -S pyprland btop lazydocker
 
 ## Installation
 
+### Quick Install (Recommended)
+
 ```bash
-# Clone the repository
-git clone https://github.com/USERNAME/hyprod.git
-cd hyprod
-
-# Run setup script
-./dots-hyprland/setup
-
-# Copy configurations
-cp -r dots-hyprland/dots/.config/* ~/.config/
+bash <(curl -s https://raw.githubusercontent.com/Frexxis/hyprod/main/install.sh)
 ```
+
+This will:
+1. Check system compatibility (Arch-based + Hyprland)
+2. Clone hyprod to `~/.local/share/hyprod`
+3. Install dependencies and copy configs
+4. Verify installation
+
+### Manual Install
+
+```bash
+git clone https://github.com/Frexxis/hyprod
+cd hyprod
+./setup install
+```
+
+### After Installation
+
+1. Log out and log back in
+2. Select Hyprland at login screen
+3. Or if already in Hyprland: `hyprctl reload`
+
+> **Troubleshooting?** See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
 
 ## Keybinds
 
@@ -71,56 +87,25 @@ cp -r dots-hyprland/dots/.config/* ~/.config/
 | `Super + Shift + G` | lazygit (scratchpad) |
 | `Super + Shift + H` | btop (scratchpad) |
 
-## Documentation
-
-| Document | Description |
-|----------|-------------|
-| [INDEX.md](./INDEX.md) | Project structure & knowledge base |
-| [PRD.md](./PRD.md) | Product requirements |
-| [PHASES.md](./PHASES.md) | 8-phase implementation roadmap |
-| [QUICKSTART.md](./QUICKSTART.md) | Quick setup guide |
-| [CONTRIBUTING.md](./CONTRIBUTING.md) | Contribution guidelines |
-
 ## Project Structure
 
 ```
 hyprod/
-├── dots-hyprland/
-│   ├── dots/.config/
-│   │   ├── hypr/           # Hyprland configs
-│   │   ├── kitty/          # Terminal config
-│   │   ├── quickshell/     # QML shell (UI)
-│   │   └── matugen/        # Dynamic theming
-│   ├── setup               # Installation script
-│   └── diagnose            # Diagnostic tool
-├── README.md
-├── INDEX.md
-├── PRD.md
-├── PHASES.md
-├── QUICKSTART.md
-└── CONTRIBUTING.md
+├── .github/              # GitHub workflows & templates
+├── docs/examples/        # Configuration examples
+├── dots/                 # Dotfiles
+│   └── .config/
+│       ├── hypr/         # Hyprland configs
+│       ├── kitty/        # Terminal config
+│       ├── quickshell/   # QML shell (UI)
+│       └── matugen/      # Dynamic theming
+├── dots-extra/           # Extra configs
+├── sdata/                # Setup data
+├── setup                 # Installation script
+├── diagnose              # Diagnostic tool
+├── install.sh            # One-liner installer
+└── README.md
 ```
-
-## Performance
-
-| Metric | Target |
-|--------|--------|
-| CPU Idle | < 5% |
-| RAM Idle | < 200 MB |
-| Sidebar Open | < 100ms |
-
-## Roadmap
-
-- [x] Phase 1: Project Setup
-- [ ] Phase 2: Cleanup & Bug Fixes
-- [ ] Phase 3: Launch-or-Focus
-- [ ] Phase 4: Developer Sidebar (Basic)
-- [ ] Phase 5: Developer Sidebar (Advanced)
-- [ ] Phase 6: Claude Code CLI
-- [ ] Phase 7: Extra Features
-- [ ] Phase 8: Polish & Release
-
-See [PHASES.md](./PHASES.md) for detailed roadmap.
 
 ## Contributing
 
