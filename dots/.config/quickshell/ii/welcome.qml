@@ -391,16 +391,16 @@ ApplicationWindow {
 
                         RippleButtonWithIcon {
                             materialIcon: "help"
-                            mainText: Translation.tr("Usage")
+                            mainText: Translation.tr("Troubleshooting")
                             onClicked: {
-                                Qt.openUrlExternally("https://end-4.github.io/dots-hyprland-wiki/en/ii-qs/02usage/");
+                                Qt.openUrlExternally("https://github.com/Frexxis/hyprod/blob/main/TROUBLESHOOTING.md");
                             }
                         }
                         RippleButtonWithIcon {
                             materialIcon: "construction"
-                            mainText: Translation.tr("Configuration")
+                            mainText: Translation.tr("README")
                             onClicked: {
-                                Qt.openUrlExternally("https://end-4.github.io/dots-hyprland-wiki/en/ii-qs/03config/");
+                                Qt.openUrlExternally("https://github.com/Frexxis/hyprod/blob/main/README.md");
                             }
                         }
                     }
@@ -408,7 +408,7 @@ ApplicationWindow {
 
                 ContentSection {
                     icon: "monitoring"
-                    title: Translation.tr("Useless buttons")
+                    title: Translation.tr("Links")
 
                     Flow {
                         Layout.fillWidth: true
@@ -418,14 +418,14 @@ ApplicationWindow {
                             nerdIcon: "󰊤"
                             mainText: Translation.tr("GitHub")
                             onClicked: {
-                                Qt.openUrlExternally("https://github.com/end-4/dots-hyprland");
+                                Qt.openUrlExternally("https://github.com/Frexxis/hyprod");
                             }
                         }
                         RippleButtonWithIcon {
-                            materialIcon: "favorite"
-                            mainText: "Funny number"
+                            materialIcon: "bug_report"
+                            mainText: Translation.tr("Issues")
                             onClicked: {
-                                Qt.openUrlExternally("https://github.com/sponsors/end-4");
+                                Qt.openUrlExternally("https://github.com/Frexxis/hyprod/issues");
                             }
                         }
                     }

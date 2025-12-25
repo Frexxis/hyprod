@@ -95,11 +95,11 @@ ContentPage {
                 Layout.alignment: Qt.AlignVCenter
                 // spacing: 10
                 StyledText {
-                    text: Translation.tr("illogical-impulse")
+                    text: Translation.tr("hyprod")
                     font.pixelSize: Appearance.font.pixelSize.title
                 }
                 StyledText {
-                    text: "https://github.com/end-4/dots-hyprland"
+                    text: "https://github.com/Frexxis/hyprod"
                     font.pixelSize: Appearance.font.pixelSize.normal
                     textFormat: Text.MarkdownText
                     onLinkActivated: (link) => {
@@ -115,10 +115,10 @@ ContentPage {
             spacing: 5
 
             RippleButtonWithIcon {
-                materialIcon: "auto_stories"
-                mainText: Translation.tr("Documentation")
+                materialIcon: "help_outline"
+                mainText: Translation.tr("Troubleshooting")
                 onClicked: {
-                    Qt.openUrlExternally("https://end-4.github.io/dots-hyprland-wiki/en/ii-qs/02usage/")
+                    Qt.openUrlExternally("https://github.com/Frexxis/hyprod/blob/main/TROUBLESHOOTING.md")
                 }
             }
             RippleButtonWithIcon {
@@ -126,21 +126,21 @@ ContentPage {
                 materialIconFill: false
                 mainText: Translation.tr("Issues")
                 onClicked: {
-                    Qt.openUrlExternally("https://github.com/end-4/dots-hyprland/issues")
+                    Qt.openUrlExternally("https://github.com/Frexxis/hyprod/issues")
                 }
             }
             RippleButtonWithIcon {
                 materialIcon: "forum"
                 mainText: Translation.tr("Discussions")
                 onClicked: {
-                    Qt.openUrlExternally("https://github.com/end-4/dots-hyprland/discussions")
+                    Qt.openUrlExternally("https://github.com/Frexxis/hyprod/discussions")
                 }
             }
             RippleButtonWithIcon {
-                materialIcon: "favorite"
-                mainText: Translation.tr("Donate")
+                materialIcon: "code"
+                mainText: Translation.tr("Source")
                 onClicked: {
-                    Qt.openUrlExternally("https://github.com/sponsors/end-4")
+                    Qt.openUrlExternally("https://github.com/Frexxis/hyprod")
                 }
             }
 
