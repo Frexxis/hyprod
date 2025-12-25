@@ -45,7 +45,11 @@ WButton {
         color: root.color
         Behavior on color {
             enabled: root.animateChoiceHighlight
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
 
         WFadeLoader {
@@ -65,7 +69,11 @@ WButton {
 
                 Behavior on height {
                     enabled: root.animateChoiceHighlight
-                    animation: Looks.transition.opacity.createObject(this)
+                    NumberAnimation {
+                        duration: 120
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0,1,1,1,1,1]
+                    }
                 }
             }
         }

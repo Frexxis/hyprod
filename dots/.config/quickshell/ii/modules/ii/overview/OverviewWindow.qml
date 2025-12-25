@@ -77,16 +77,36 @@ Item { // Window
     }
 
     Behavior on x {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
     Behavior on y {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
     Behavior on width {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
     Behavior on height {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
 
     ScreencopyView {
@@ -134,10 +154,20 @@ Item { // Window
             sourceSize: Qt.size(iconSize, iconSize)
 
             Behavior on width {
-                animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                NumberAnimation {
+                    alwaysRunToEnd: true
+                    duration: Appearance.animation.elementMoveEnter.duration
+                    easing.type: Appearance.animation.elementMoveEnter.type
+                    easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+                }
             }
             Behavior on height {
-                animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                NumberAnimation {
+                    alwaysRunToEnd: true
+                    duration: Appearance.animation.elementMoveEnter.duration
+                    easing.type: Appearance.animation.elementMoveEnter.type
+                    easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+                }
             }
         }
     }

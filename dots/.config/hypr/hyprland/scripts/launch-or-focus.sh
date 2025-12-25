@@ -51,7 +51,15 @@ for ((i = 2; i <= $#; i += 2)); do
     command -v "${tokens[0]}" >/dev/null 2>&1 || continue
   fi
 
-  eval "$launch_cmd" &
+  # Use array execution for safety instead of eval
+  # This handles simple commands properly without shell injection risk
+  if [[ "$launch_cmd" == *'&&'* || "$launch_cmd" == *'||'* || "$launch_cmd" == *'|'* || "$launch_cmd" == *';'* ]]; then
+    # Complex command with shell operators - use explicit bash -c
+    bash -c "$launch_cmd" &
+  else
+    # Simple command - use direct array execution (safer)
+    "${tokens[@]}" &
+  fi
   exit 0
 done
 

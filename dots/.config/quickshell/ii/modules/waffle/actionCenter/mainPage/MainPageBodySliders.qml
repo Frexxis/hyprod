@@ -26,7 +26,11 @@ ColumnLayout {
             iconName: "weather-sunny"
 
             Behavior on animationValue {
-                animation: Looks.transition.longMovement.createObject(this)
+                NumberAnimation {
+                    duration: 1000
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: [0,1,1,1,1,1]
+                }
             }
         }
         

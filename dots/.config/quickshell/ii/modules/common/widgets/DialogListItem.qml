@@ -15,7 +15,11 @@ RippleButton {
     implicitWidth: contentItem.implicitWidth + horizontalPadding * 2
     implicitHeight: contentItem.implicitHeight + verticalPadding * 2
     Behavior on implicitHeight {
-        animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
+        NumberAnimation {
+            duration: Appearance.animation.elementMove.duration
+            easing.type: Appearance.animation.elementMove.type
+            easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
+        }
     }
 
     colBackground: ColorUtils.transparentize(Appearance.colors.colLayer3)

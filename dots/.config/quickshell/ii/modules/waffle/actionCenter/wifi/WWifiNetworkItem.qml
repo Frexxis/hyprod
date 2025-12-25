@@ -53,7 +53,11 @@ ExpandableChoiceButton {
             spacing: 1
 
             Behavior on Layout.topMargin {
-                animation: Looks.transition.move.createObject(this)
+                NumberAnimation {
+                    duration: 170
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+                }
             }
 
             WText { // Network name
@@ -71,7 +75,11 @@ ExpandableChoiceButton {
                 color: Looks.colors.subfg
                 visible: root.wifiNetwork?.active || root.expanded
                 Behavior on opacity {
-                    animation: Looks.transition.opacity.createObject(this)
+                    NumberAnimation {
+                        duration: 120
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0,1,1,1,1,1]
+                    }
                 }
             }
 

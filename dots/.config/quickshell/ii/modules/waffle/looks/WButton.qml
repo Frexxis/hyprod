@@ -101,7 +101,11 @@ Button {
         radius: Looks.radius.medium
         color: root.color
         Behavior on color {
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
     }
 

@@ -21,7 +21,10 @@ GroupButton {
             Appearance.colors.colOnLayer1Inactive
 
         Behavior on color {
-            animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+            ColorAnimation {
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.curve
+            }
         }
     }
 }

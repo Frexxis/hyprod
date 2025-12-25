@@ -296,7 +296,9 @@ switch() {
     fi
 
     matugen "${matugen_args[@]}"
-    source "$(eval echo $ILLOGICAL_IMPULSE_VIRTUAL_ENV)/bin/activate"
+    # Expand tilde if present (safer than eval)
+    local venv_path="${ILLOGICAL_IMPULSE_VIRTUAL_ENV/#\~/$HOME}"
+    source "$venv_path/bin/activate"
     python3 "$SCRIPT_DIR/generate_colors_material.py" "${generate_colors_material_args[@]}" \
         > "$STATE_DIR"/user/generated/material_colors.scss
     "$SCRIPT_DIR"/applycolor.sh
@@ -329,7 +331,9 @@ main() {
 
     detect_scheme_type_from_image() {
         local img="$1"
-        source "$(eval echo $ILLOGICAL_IMPULSE_VIRTUAL_ENV)/bin/activate"
+        # Expand tilde if present (safer than eval)
+        local venv_path="${ILLOGICAL_IMPULSE_VIRTUAL_ENV/#\~/$HOME}"
+        source "$venv_path/bin/activate"
         "$SCRIPT_DIR"/scheme_for_image.py "$img" 2>/dev/null | tr -d '\n'
         deactivate
     }

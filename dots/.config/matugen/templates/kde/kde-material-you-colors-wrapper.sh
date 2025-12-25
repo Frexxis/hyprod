@@ -43,6 +43,8 @@ case "$scheme_variant_str" in
         ;;
 esac
 
-source "$(eval echo $ILLOGICAL_IMPULSE_VIRTUAL_ENV)/bin/activate"
+# Expand tilde if present (safer than eval)
+VENV_PATH="${ILLOGICAL_IMPULSE_VIRTUAL_ENV/#\~/$HOME}"
+source "$VENV_PATH/bin/activate"
 kde-material-you-colors "$mode_flag" --color "$color" -sv "$sv_num"
 deactivate

@@ -1,10 +1,34 @@
 import QtQuick
+import Quickshell.Io
 
 ApiStrategy {
     id: root
 
-    // Claude CLI path
-    readonly property string cliPath: "/home/muhammetali/.local/bin/claude"
+    // Claude CLI path - dynamically detected from PATH
+    property string cliPath: ""
+
+    Component.onCompleted: {
+        // Find claude in PATH using 'which' command
+        whichProcess.running = true;
+    }
+
+    Process {
+        id: whichProcess
+        command: ["which", "claude"]
+        running: false
+        stdout: StdioCollector {
+            onStreamFinished: {
+                const output = text.trim();
+                if (output && output.length > 0 && !output.startsWith("which:")) {
+                    root.cliPath = output;
+                } else {
+                    // Fallback to common installation paths
+                    const home = Qt.getenv("HOME");
+                    root.cliPath = home + "/.local/bin/claude";
+                }
+            }
+        }
+    }
 
     // Session management
     property string sessionId: ""

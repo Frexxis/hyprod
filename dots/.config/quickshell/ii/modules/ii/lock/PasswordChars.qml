@@ -13,7 +13,12 @@ StyledFlickable {
     contentWidth: dotsRow.implicitWidth
     contentX: (Math.max(contentWidth - width, 0))
     Behavior on contentX {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
     Row {
         id: dotsRow

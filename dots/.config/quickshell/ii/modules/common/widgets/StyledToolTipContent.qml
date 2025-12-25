@@ -30,13 +30,28 @@ Item {
         clip: true
 
         Behavior on implicitWidth {
-            animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
         Behavior on implicitHeight {
-            animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
         Behavior on opacity {
-            animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
 
         StyledText {

@@ -31,11 +31,19 @@ FooterRectangle {
 
     Behavior on horizontalPadding {
         enabled: Config.options.waffles.tweaks.smootherSearchBar
-        animation: Looks.transition.move.createObject(this)
+        NumberAnimation {
+            duration: 170
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+        }
     }
     Behavior on verticalPadding {
         enabled: Config.options.waffles.tweaks.smootherSearchBar
-        animation: Looks.transition.move.createObject(this)
+        NumberAnimation {
+            duration: 170
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+        }
     }
 
     Rectangle {

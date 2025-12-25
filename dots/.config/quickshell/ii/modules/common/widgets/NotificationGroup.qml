@@ -141,7 +141,12 @@ MouseArea { // Notification group area
 
         Behavior on implicitHeight {
             id: implicitHeightAnim
-            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
 
         RowLayout { // Left column for icon, right column for content
@@ -169,7 +174,12 @@ MouseArea { // Notification group area
                     5 : 0) : 0
                 // spacing: 00
                 Behavior on spacing {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    }
                 }
 
                 Item { // App name (or summary when there's only 1 notif) and time
@@ -234,7 +244,12 @@ MouseArea { // Notification group area
                     // clip: true
                     interactive: false
                     Behavior on spacing {
-                        animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                        NumberAnimation {
+                            alwaysRunToEnd: true
+                            duration: Appearance.animation.elementMoveFast.duration
+                            easing.type: Appearance.animation.elementMoveFast.type
+                            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                        }
                     }
                     model: ScriptModel {
                         values: root.expanded ? root.notifications.slice().reverse() : 

@@ -25,7 +25,12 @@ Item {
         scale = 1
     }
     Behavior on scale {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
 
     Rectangle {
@@ -35,7 +40,12 @@ Item {
         visible: Config.options.overlay.darkenScreen && opacity > 0
         opacity: (GlobalStates.overlayOpen && root.scale !== initScale) ? 1 : 0
         Behavior on opacity {
-            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
     }
 

@@ -174,12 +174,24 @@ Singleton {
         updateNetworkStrength.running = true;
     }
 
+    // Debounce timer to prevent spawning multiple nmcli processes per event storm
+    Timer {
+        id: updateDebounceTimer
+        interval: 300
+        repeat: false
+        onTriggered: root.update()
+    }
+
+    function queueUpdate() {
+        updateDebounceTimer.restart()
+    }
+
     Process {
         id: subscriber
         running: true
         command: ["nmcli", "monitor"]
         stdout: SplitParser {
-            onRead: root.update()
+            onRead: root.queueUpdate()  // Debounced to prevent process storm
         }
     }
 

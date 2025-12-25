@@ -37,11 +37,21 @@ Item {
         color: root.color
 
         Behavior on height {
-            animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementResize.duration
+                easing.type: Appearance.animation.elementResize.type
+                easing.bezierCurve: Appearance.animation.elementResize.bezierCurve
+            }
         }
 
         Behavior on x {
-            animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementResize.duration
+                easing.type: Appearance.animation.elementResize.type
+                easing.bezierCurve: Appearance.animation.elementResize.bezierCurve
+            }
         }
     }
 }

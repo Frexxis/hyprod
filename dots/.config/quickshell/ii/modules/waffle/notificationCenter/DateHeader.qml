@@ -16,7 +16,11 @@ FooterRectangle {
     property bool collapsed
     color: ColorUtils.transparentize(Looks.colors.bgPanelBody, collapsed ? 0 : 1)
     Behavior on color {
-        animation: Looks.transition.color.createObject(this)
+        ColorAnimation {
+            duration: 80
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
 
     RowLayout {
@@ -46,7 +50,11 @@ FooterRectangle {
                     icon: "chevron-down"
                     rotation: root.collapsed ? 180 : 0
                     Behavior on rotation {
-                        animation: Looks.transition.rotate.createObject(this)
+                        NumberAnimation {
+                            duration: 170
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+                        }
                     }
                 }
             }

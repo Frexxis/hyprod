@@ -28,7 +28,11 @@ Button {
         radius: Looks.radius.medium
         color: root.down ? Looks.colors.bg2Active : (root.hovered ? Looks.colors.bg2Hover : ColorUtils.transparentize(Looks.colors.bg2))
         Behavior on color {
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
     }
 

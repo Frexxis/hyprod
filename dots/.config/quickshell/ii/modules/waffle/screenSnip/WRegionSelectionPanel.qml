@@ -260,7 +260,11 @@ PanelWindow {
                         top: parent.top
                         topMargin: (parent.height - height) / 2 + (selectionTypeBtn.down ? 2 : 0)
                         Behavior on topMargin {
-                            animation: Looks.transition.enter.createObject(this)
+                            NumberAnimation {
+                                duration: 250
+                                easing.type: Easing.BezierSpline
+                                easing.bezierCurve: [0,1,1,1,1,1]
+                            }
                         }
                     }
                     icon: "chevron-down"

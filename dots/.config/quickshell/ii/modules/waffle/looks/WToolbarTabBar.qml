@@ -21,7 +21,11 @@ TabBar {
                 left: parent.left
                 leftMargin: root.currentIndex * (root.width / root.count)
                 Behavior on leftMargin {
-                    animation: Looks.transition.resize.createObject(this)
+                    NumberAnimation {
+                        duration: 200
+                        easing.type: Easing.BezierSpline
+                        easing.bezierCurve: [0,1,1,1,1,1]
+                    }
                 }
             }
             radius: Looks.radius.medium

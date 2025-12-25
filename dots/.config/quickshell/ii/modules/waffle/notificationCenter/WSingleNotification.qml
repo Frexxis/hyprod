@@ -37,7 +37,11 @@ MouseArea {
     implicitWidth: contentItem.implicitWidth
 
     Behavior on implicitHeight {
-        animation: Looks.transition.enter.createObject(this)
+        NumberAnimation {
+            duration: 250
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
 
     property real dragDismissThreshold: 100
@@ -68,7 +72,11 @@ MouseArea {
         border.color: root.isPopup ? Looks.colors.bg2Border : Looks.colors.bgPanelSeparator
 
         Behavior on x {
-            animation: Looks.transition.enter.createObject(this)
+            NumberAnimation {
+                duration: 250
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
 
         ColumnLayout {
@@ -244,7 +252,11 @@ MouseArea {
                     rotation: root.expanded ? -180 : 0
                     color: expandButton.colForeground
                     Behavior on rotation {
-                        animation: Looks.transition.rotate.createObject(this)
+                        NumberAnimation {
+                            duration: 170
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+                        }
                     }
                 }
             }

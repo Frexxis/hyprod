@@ -14,6 +14,10 @@ Loader {
 
     Behavior on opacity {
         id: opacityBehavior
-        animation: Looks.transition.opacity.createObject(null)
+        NumberAnimation {
+            duration: 120
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
 }

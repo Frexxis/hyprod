@@ -269,7 +269,10 @@ Item {
                 color: Appearance.colors.colPrimary
 
                 Behavior on width {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.curve
+                    }
                 }
             }
         }

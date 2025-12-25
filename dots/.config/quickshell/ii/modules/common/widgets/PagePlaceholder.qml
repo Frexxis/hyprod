@@ -22,7 +22,12 @@ Item {
     }
 
     Behavior on opacity {
-        animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveEnter.duration
+            easing.type: Appearance.animation.elementMoveEnter.type
+            easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+        }
     }
 
     ColumnLayout {

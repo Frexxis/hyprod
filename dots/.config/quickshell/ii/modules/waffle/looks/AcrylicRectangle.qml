@@ -14,10 +14,18 @@ Rectangle {
     color: Looks.colors.bg1Hover
     radius: Looks.radius.medium
     Behavior on color {
-        animation: Looks.transition.color.createObject(this)
+        ColorAnimation {
+            duration: 80
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
     Behavior on internalBorderColor {
-        animation: Looks.transition.color.createObject(this)
+        ColorAnimation {
+            duration: 80
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
     onInternalBorderColorChanged: {
         borderCanvas.requestPaint();

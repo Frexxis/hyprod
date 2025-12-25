@@ -37,10 +37,20 @@ Item {
         radius: Math.min(width, height) / 2
         color: root.color
         Behavior on implicitHeight {
-            animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementResize.duration
+                easing.type: Appearance.animation.elementResize.type
+                easing.bezierCurve: Appearance.animation.elementResize.bezierCurve
+            }
         }
         Behavior on implicitWidth {
-            animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementResize.duration
+                easing.type: Appearance.animation.elementResize.type
+                easing.bezierCurve: Appearance.animation.elementResize.bezierCurve
+            }
         }
     }
 
@@ -64,7 +74,12 @@ Item {
             radius: Appearance.rounding.small
 
             Behavior on implicitWidth {
-                animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
+                NumberAnimation {
+                    alwaysRunToEnd: true
+                    duration: Appearance.animation.elementResize.duration
+                    easing.type: Appearance.animation.elementResize.type
+                    easing.bezierCurve: Appearance.animation.elementResize.bezierCurve
+                }
             }
         }
     }

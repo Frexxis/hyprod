@@ -30,7 +30,10 @@ MouseArea {
         anchors.fill: parent
         radius: Appearance.rounding.normal
         Behavior on color {
-            animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+            ColorAnimation {
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+            }
         }
 
         ColumnLayout {
@@ -118,7 +121,10 @@ MouseArea {
                 elide: Text.ElideRight
                 font.pixelSize: Appearance.font.pixelSize.smaller
                 Behavior on color {
-                    animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+                    ColorAnimation {
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                    }
                 }
                 text: fileModelData.fileName
             }

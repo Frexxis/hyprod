@@ -23,7 +23,11 @@ WChoiceButton {
     animateChoiceHighlight: false
 
     Behavior on implicitHeight {
-        animation: Looks.transition.resize.createObject(this)
+        NumberAnimation {
+            duration: 200
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
     onClicked: expanded = !expanded
 }

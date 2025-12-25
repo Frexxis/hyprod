@@ -218,7 +218,10 @@ Item { // Bar content region
                 property color colText: toggled ? Appearance.m3colors.m3onSecondaryContainer : Appearance.colors.colOnLayer0
 
                 Behavior on colText {
-                    animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+                    ColorAnimation {
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                    }
                 }
 
                 onPressed: {
@@ -237,7 +240,10 @@ Item { // Bar content region
                         Layout.fillWidth: true
                         Layout.bottomMargin: reveal ? indicatorsColumnLayout.realSpacing : 0
                         Behavior on Layout.bottomMargin {
-                            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                            NumberAnimation {
+                                duration: Appearance.animation.elementMoveFast.duration
+                                easing.type: Appearance.animation.elementMoveFast.type
+                            }
                         }
                         MaterialSymbol {
                             text: "volume_off"
@@ -251,7 +257,10 @@ Item { // Bar content region
                         Layout.fillWidth: true
                         Layout.bottomMargin: reveal ? indicatorsColumnLayout.realSpacing : 0
                         Behavior on Layout.topMargin {
-                            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                            NumberAnimation {
+                                duration: Appearance.animation.elementMoveFast.duration
+                                easing.type: Appearance.animation.elementMoveFast.type
+                            }
                         }
                         MaterialSymbol {
                             text: "mic_off"
@@ -273,7 +282,10 @@ Item { // Bar content region
                         implicitHeight: reveal ? notificationUnreadCount.implicitHeight : 0
                         implicitWidth: reveal ? notificationUnreadCount.implicitWidth : 0
                         Behavior on Layout.bottomMargin {
-                            animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                            NumberAnimation {
+                                duration: Appearance.animation.elementMoveFast.duration
+                                easing.type: Appearance.animation.elementMoveFast.type
+                            }
                         }
                         Bar.NotificationUnreadCount {
                             id: notificationUnreadCount

@@ -73,7 +73,11 @@ PopupWindow {
             property real sourceEdgeMargin: root.visible ? (root.ambientShadowWidth + root.visualMargin) : -root.implicitHeight
             Behavior on sourceEdgeMargin {
                 id: marginBehavior
-                animation: Looks.transition.enter.createObject(this)
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: [0,1,1,1,1,1]
+                }
             }
             anchors {
                 left: parent.left

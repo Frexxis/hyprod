@@ -11,9 +11,12 @@ ListView {
     ScrollBar.vertical: WScrollBar {}
 
     displaced: Transition {
-        animations: [Looks.transition.enter.createObject(this, {
-                property: "y"
-            })]
+        NumberAnimation {
+            property: "y"
+            duration: 250
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
 
 }

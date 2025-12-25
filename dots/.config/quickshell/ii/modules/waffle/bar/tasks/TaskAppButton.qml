@@ -68,13 +68,25 @@ AppButton {
         color: root.active ? Looks.colors.accent : Looks.colors.accentUnfocused
 
         Behavior on implicitWidth {
-            animation: Looks.transition.enter.createObject(this)
+            NumberAnimation {
+                duration: 250
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
         Behavior on color {
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
         Behavior on opacity {
-            animation: Looks.transition.opacity.createObject(this)
+            NumberAnimation {
+                duration: 120
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
     }
 

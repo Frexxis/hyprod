@@ -45,13 +45,26 @@ RadioButton {
                 opacity: checked ? 1 : 0
 
                 Behavior on opacity {
-                    animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    }
                 }
                 Behavior on width {
-                    animation: Appearance?.animation.elementMove.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        duration: Appearance.animation.elementMove.duration
+                        easing.type: Appearance.animation.elementMove.type
+                        easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
+                    }
                 }
                 Behavior on height {
-                    animation: Appearance?.animation.elementMove.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        duration: Appearance.animation.elementMove.duration
+                        easing.type: Appearance.animation.elementMove.type
+                        easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
+                    }
                 }
 
             }
@@ -66,13 +79,26 @@ RadioButton {
                 opacity: root.hovered ? 0.1 : 0
 
                 Behavior on opacity {
-                    animation: Appearance?.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    }
                 }
                 Behavior on width {
-                    animation: Appearance?.animation.elementMove.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        duration: Appearance.animation.elementMove.duration
+                        easing.type: Appearance.animation.elementMove.type
+                        easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
+                    }
                 }
                 Behavior on height {
-                    animation: Appearance?.animation.elementMove.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        duration: Appearance.animation.elementMove.duration
+                        easing.type: Appearance.animation.elementMove.type
+                        easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
+                    }
                 }
             }
         }

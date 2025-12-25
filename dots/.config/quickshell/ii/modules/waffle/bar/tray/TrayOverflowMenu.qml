@@ -73,10 +73,18 @@ BarPopup {
                     property real initialY
 
                     Behavior on x {
-                        animation: Looks.transition.move.createObject(this)
+                        NumberAnimation {
+                            duration: 170
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+                        }
                     }
                     Behavior on y {
-                        animation: Looks.transition.move.createObject(this)
+                        NumberAnimation {
+                            duration: 170
+                            easing.type: Easing.BezierSpline
+                            easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+                        }
                     }
 
                     MouseArea {

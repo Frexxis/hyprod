@@ -122,10 +122,18 @@ WMouseAreaButton {
             constraintSize: Qt.size(Math.round(root.size.width), Math.round(root.size.height))
 
             Behavior on implicitWidth {
-                animation: Looks.transition.enter.createObject(this)
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: [0,1,1,1,1,1]
+                }
             }
             Behavior on implicitHeight {
-                animation: Looks.transition.enter.createObject(this)
+                NumberAnimation {
+                    duration: 250
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: [0,1,1,1,1,1]
+                }
             }
 
             captureSource: root.toplevel ?? null

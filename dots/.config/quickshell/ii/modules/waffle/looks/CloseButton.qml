@@ -32,10 +32,18 @@ Button {
         opacity: reusableCloseButton.hovered ? 1 : 0
         color: reusableCloseButton.pressed ? Looks.colors.dangerActive : Looks.colors.danger
         Behavior on opacity {
-            animation: Looks.transition.opacity.createObject(this)
+            NumberAnimation {
+                duration: 120
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
         Behavior on color {
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
     }
     

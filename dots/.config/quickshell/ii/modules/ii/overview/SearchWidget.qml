@@ -111,7 +111,12 @@ Item { // Wrapper
         Behavior on implicitHeight {
             id: searchHeightBehavior
             enabled: GlobalStates.overviewOpen && root.showResults
-            animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
+            NumberAnimation {
+                alwaysRunToEnd: true
+                duration: Appearance.animation.elementMove.duration
+                easing.type: Appearance.animation.elementMove.type
+                easing.bezierCurve: Appearance.animation.elementMove.bezierCurve
+            }
         }
 
         ColumnLayout {

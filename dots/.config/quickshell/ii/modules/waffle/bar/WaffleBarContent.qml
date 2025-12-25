@@ -30,7 +30,11 @@ Rectangle {
         opacity: Config.options.waffles.bar.leftAlignApps ? 0 : 1
         visible: opacity > 0
         Behavior on opacity {
-            animation: Looks.transition.opacity.createObject(this)
+            NumberAnimation {
+                duration: 120
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
 
         WidgetsButton {}
@@ -52,7 +56,11 @@ Rectangle {
         }
 
         transitions: Transition {
-            animations: Looks.transition.anchor.createObject(this)
+            AnchorAnimation {
+                duration: 160
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
 
         StartButton {}

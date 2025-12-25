@@ -84,6 +84,11 @@ Rectangle {
         }
         color: Appearance.colors.colOnPrimaryContainer
 
-        animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+        animation: NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveFast.duration
+            easing.type: Appearance.animation.elementMoveFast.type
+            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+        }
     }
 }

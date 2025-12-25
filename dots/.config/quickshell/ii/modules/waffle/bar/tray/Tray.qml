@@ -28,7 +28,11 @@ RowLayout {
         iconMonochrome: true
         iconRotation: (Config.options.waffles.bar.bottom ? 180 : 0) + (root.overflowOpen ? 180 : 0)
         Behavior on iconRotation {
-            animation: Looks.transition.rotate.createObject(this)
+            NumberAnimation {
+                duration: 170
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0.42,0.00,0.58,1.00,1,1]
+            }
         }
 
         onClicked: {

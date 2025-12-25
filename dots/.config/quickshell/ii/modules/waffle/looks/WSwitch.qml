@@ -27,10 +27,18 @@ Switch {
         border.color: root.checked ? root.checkedColor : root.borderColor
 
         Behavior on color {
-            animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+            ColorAnimation {
+                duration: 200
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0.34, 0.80, 0.34, 1.00, 1, 1]
+            }
         }
         Behavior on border.color {
-            animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+            ColorAnimation {
+                duration: 200
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0.34, 0.80, 0.34, 1.00, 1, 1]
+            }
         }
     }
 
@@ -51,16 +59,32 @@ Switch {
         }
 
         Behavior on anchors.leftMargin {
-            animation: Looks.transition.enter.createObject(this)
+            NumberAnimation {
+                duration: 250
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
         Behavior on implicitWidth {
-            animation: Looks.transition.resize.createObject(this)
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
         Behavior on implicitHeight {
-            animation: Looks.transition.resize.createObject(this)
+            NumberAnimation {
+                duration: 200
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
         Behavior on color {
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
     }
 }

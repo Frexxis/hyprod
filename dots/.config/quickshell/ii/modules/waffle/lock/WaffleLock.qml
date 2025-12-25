@@ -71,7 +71,11 @@ LockScreen {
             opacity: root.passwordView ? 1 : 0
 
             Behavior on opacity {
-                animation: Looks.transition.opacity.createObject(this)
+                NumberAnimation {
+                    duration: 120
+                    easing.type: Easing.BezierSpline
+                    easing.bezierCurve: [0,1,1,1,1,1]
+                }
             }
 
             Behavior on scale {

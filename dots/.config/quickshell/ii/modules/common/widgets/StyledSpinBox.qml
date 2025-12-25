@@ -52,11 +52,15 @@ SpinBox {
         topRightRadius: root.innerButtonRadius
         bottomRightRadius: root.innerButtonRadius
 
-        color: root.down.pressed ? Appearance.colors.colLayer2Active : 
-            root.down.hovered ? Appearance.colors.colLayer2Hover : 
+        color: root.down.pressed ? Appearance.colors.colLayer2Active :
+            root.down.hovered ? Appearance.colors.colLayer2Hover :
             ColorUtils.transparentize(Appearance.colors.colLayer2)
         Behavior on color {
-            animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+            ColorAnimation {
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
 
         MaterialSymbol {
@@ -79,11 +83,15 @@ SpinBox {
         topLeftRadius: root.innerButtonRadius
         bottomLeftRadius: root.innerButtonRadius
 
-        color: root.up.pressed ? Appearance.colors.colLayer2Active : 
-            root.up.hovered ? Appearance.colors.colLayer2Hover : 
+        color: root.up.pressed ? Appearance.colors.colLayer2Active :
+            root.up.hovered ? Appearance.colors.colLayer2Hover :
             ColorUtils.transparentize(Appearance.colors.colLayer2)
         Behavior on color {
-            animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+            ColorAnimation {
+                duration: Appearance.animation.elementMoveFast.duration
+                easing.type: Appearance.animation.elementMoveFast.type
+                easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+            }
         }
 
         MaterialSymbol {

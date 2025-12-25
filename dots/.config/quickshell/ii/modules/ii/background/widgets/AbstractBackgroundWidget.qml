@@ -25,11 +25,21 @@ AbstractWidget {
     visible: opacity > 0
     opacity: (GlobalStates.screenLocked && !visibleWhenLocked) ? 0 : 1
     Behavior on opacity {
-        animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementMoveFast.duration
+            easing.type: Appearance.animation.elementMoveFast.type
+            easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+        }
     }
     scale: (draggable && containsPress) ? 1.05 : 1
     Behavior on scale {
-        animation: Appearance.animation.elementResize.numberAnimation.createObject(this)
+        NumberAnimation {
+            alwaysRunToEnd: true
+            duration: Appearance.animation.elementResize.duration
+            easing.type: Appearance.animation.elementResize.type
+            easing.bezierCurve: Appearance.animation.elementResize.bezierCurve
+        }
     }
 
     draggable: placementStrategy === "free"

@@ -300,7 +300,10 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                 opacity: messageListView.atYBeginning ? 0 : 1
                 visible: opacity > 0
                 Behavior on opacity {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.curve
+                    }
                 }
             }
             Rectangle {
@@ -316,7 +319,10 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                 radius: Appearance.rounding.normal - root.padding
                 color: messageListView.atYBeginning ? Appearance.colors.colLayer2 : Appearance.colors.colLayer2Base
                 Behavior on color {
-                    animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+                    ColorAnimation {
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.curve
+                    }
                 }
                 RowLayout {
                     id: statusRowLayout
@@ -488,7 +494,10 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
             clip: true
 
             Behavior on implicitHeight {
-                animation: Appearance.animation.elementMove.numberAnimation.createObject(this)
+                NumberAnimation {
+                    duration: Appearance.animation.elementMove.duration
+                    easing.type: Appearance.animation.elementMove.curve
+                }
             }
 
             AttachedFileIndicator {

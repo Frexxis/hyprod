@@ -26,12 +26,18 @@ Rectangle {
     radius: 4
 
     Behavior on color {
-        animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
+        ColorAnimation {
+            duration: Appearance.animation.elementMoveFast.duration
+            easing.type: Appearance.animation.elementMoveFast.curve
+        }
     }
 
     visible: opacity > 0
     Behavior on opacity {
-        animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+        NumberAnimation {
+            duration: Appearance.animation.elementMoveFast.duration
+            easing.type: Appearance.animation.elementMoveFast.curve
+        }
     }
     x: clientDimensions.at[0]
     y: clientDimensions.at[1]

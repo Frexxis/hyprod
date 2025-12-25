@@ -36,7 +36,11 @@ WButton {
         border.color: root.colBackgroundBorder
 
         Behavior on border.color {
-            animation: Looks.transition.color.createObject(this)
+            ColorAnimation {
+                duration: 80
+                easing.type: Easing.BezierSpline
+                easing.bezierCurve: [0,1,1,1,1,1]
+            }
         }
     }
 }

@@ -320,22 +320,52 @@ Item {
                 border.width: 2
                 border.color: root.activeBorderColor
                 Behavior on x {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    }
                 }
                 Behavior on y {
-                    animation: Appearance.animation.elementMoveFast.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveFast.duration
+                        easing.type: Appearance.animation.elementMoveFast.type
+                        easing.bezierCurve: Appearance.animation.elementMoveFast.bezierCurve
+                    }
                 }
                 Behavior on topLeftRadius {
-                    animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveEnter.duration
+                        easing.type: Appearance.animation.elementMoveEnter.type
+                        easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+                    }
                 }
                 Behavior on topRightRadius {
-                    animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveEnter.duration
+                        easing.type: Appearance.animation.elementMoveEnter.type
+                        easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+                    }
                 }
                 Behavior on bottomLeftRadius {
-                    animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveEnter.duration
+                        easing.type: Appearance.animation.elementMoveEnter.type
+                        easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+                    }
                 }
                 Behavior on bottomRightRadius {
-                    animation: Appearance.animation.elementMoveEnter.numberAnimation.createObject(this)
+                    NumberAnimation {
+                        alwaysRunToEnd: true
+                        duration: Appearance.animation.elementMoveEnter.duration
+                        easing.type: Appearance.animation.elementMoveEnter.type
+                        easing.bezierCurve: Appearance.animation.elementMoveEnter.bezierCurve
+                    }
                 }
             }
         }

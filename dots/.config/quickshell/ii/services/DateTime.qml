@@ -26,9 +26,10 @@ Singleton {
     property string uptime: "0h, 0m"
 
     Timer {
-        interval: 10
+        interval: Config.options?.resources?.updateInterval ?? 3000
         running: true
         repeat: true
+        triggeredOnStart: true  // Trigger immediately on start instead of using 10ms hack
         onTriggered: {
             fileUptime.reload();
             const textUptime = fileUptime.text();
@@ -48,7 +49,6 @@ Singleton {
             if (minutes > 0 || !formatted)
                 formatted += `${formatted ? ", " : ""}${minutes}m`;
             uptime = formatted;
-            interval = Config.options?.resources?.updateInterval ?? 3000;
         }
     }
 

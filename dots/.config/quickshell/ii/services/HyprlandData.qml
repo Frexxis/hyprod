@@ -22,6 +22,18 @@ Singleton {
     property var monitors: []
     property var layers: ({})
 
+    // Debounce timer to prevent spawning multiple hyprctl processes per event storm
+    Timer {
+        id: debounceTimer
+        interval: 150
+        repeat: false
+        onTriggered: root.updateAll()
+    }
+
+    function queueUpdate() {
+        debounceTimer.restart()
+    }
+
     // Convenient stuff
 
     function toplevelsForWorkspace(workspace) {
@@ -89,7 +101,7 @@ Singleton {
         function onRawEvent(event) {
             // console.log("Hyprland raw event:", event.name);
             if (["openlayer", "closelayer", "screencast"].includes(event.name)) return;
-            updateAll()
+            queueUpdate()  // Debounced to prevent process storm
         }
     }
 

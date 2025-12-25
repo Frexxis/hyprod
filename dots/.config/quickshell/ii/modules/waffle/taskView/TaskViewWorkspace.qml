@@ -31,7 +31,11 @@ WMouseAreaButton {
 
     colBackground: ColorUtils.transparentize(Looks.colors.bg2, (isActiveWorkspace || droppable) ? 0 : 1)
     Behavior on color {
-        animation: Looks.transition.color.createObject(this)
+        ColorAnimation {
+            duration: 80
+            easing.type: Easing.BezierSpline
+            easing.bezierCurve: [0,1,1,1,1,1]
+        }
     }
 
     scale: root.containsPress ? 0.95 : 1
