@@ -62,13 +62,14 @@ case $1 in
   *)printf "${STY_RED}Unknown subcommand \"$1\".${STY_RST}\n";showhelp_global;exit 1;;
 esac
 #####################################################################################
-if [[ -f "${SUBCMD_DIR}/options.sh" ]];
-  then source "${SUBCMD_DIR}/options.sh"
+if [[ -f "${SUBCMD_DIR}/options.sh" ]]; then
+  # shellcheck source=/dev/null
+  source "${SUBCMD_DIR}/options.sh"
 fi
-case ${SUBCMD_NAME} in
+case "${SUBCMD_NAME}" in
   install)
-    for function in ${print_os_group_id_functions[@]}; do
-      $function
+    for function in "${print_os_group_id_functions[@]}"; do
+      "$function"
     done
     pause
     # Initialize sudo keepalive for the entire install process
@@ -76,21 +77,25 @@ case ${SUBCMD_NAME} in
     # Set trap to cleanup when this subcommand exits
     trap sudo_stop_keepalive EXIT INT TERM
     if [[ "${SKIP_ALLGREETING}" != true ]]; then
-      source ${SUBCMD_DIR}/0.greeting.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/0.greeting.sh"
     fi
     if [[ "${SKIP_ALLDEPS}" != true ]]; then
-      source ${SUBCMD_DIR}/1.deps-router.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/1.deps-router.sh"
     fi
     if [[ "${SKIP_ALLSETUPS}" != true ]]; then
-      source ${SUBCMD_DIR}/2.setups.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/2.setups.sh"
     fi
     if [[ "${SKIP_ALLFILES}" != true ]]; then
-      source ${SUBCMD_DIR}/3.files.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/3.files.sh"
     fi
     ;;
   install-deps)
-    for function in ${print_os_group_id_functions[@]}; do
-      $function
+    for function in "${print_os_group_id_functions[@]}"; do
+      "$function"
     done
     pause
     # Initialize sudo keepalive for dependency installation
@@ -98,12 +103,13 @@ case ${SUBCMD_NAME} in
     # Set trap to cleanup when this subcommand exits
     trap sudo_stop_keepalive EXIT INT TERM
     if [[ "${SKIP_ALLDEPS}" != true ]]; then
-      source ${SUBCMD_DIR}/1.deps-router.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/1.deps-router.sh"
     fi
     ;;
   install-setups)
-    for function in ${print_os_group_id_functions[@]}; do
-      $function
+    for function in "${print_os_group_id_functions[@]}"; do
+      "$function"
     done
     pause
     # Initialize sudo keepalive for setup steps
@@ -111,20 +117,23 @@ case ${SUBCMD_NAME} in
     # Set trap to cleanup when this subcommand exits
     trap sudo_stop_keepalive EXIT INT TERM
     if [[ "${SKIP_ALLSETUPS}" != true ]]; then
-      source ${SUBCMD_DIR}/2.setups.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/2.setups.sh"
     fi
     ;;
   install-files)
-    for function in ${print_os_group_id_functions[@]}; do
-      $function
+    for function in "${print_os_group_id_functions[@]}"; do
+      "$function"
     done
     pause
     if [[ "${SKIP_ALLFILES}" != true ]]; then
-      source ${SUBCMD_DIR}/3.files.sh
+      # shellcheck source=/dev/null
+      source "${SUBCMD_DIR}/3.files.sh"
     fi
     ;;
   *)
-    source ${SUBCMD_DIR}/0.run.sh
+    # shellcheck source=/dev/null
+    source "${SUBCMD_DIR}/0.run.sh"
     exit
     ;;
 esac

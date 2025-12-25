@@ -9,16 +9,18 @@
 STY_RED='\e[31m'
 STY_RST='\e[00m'
 
-cd "$(dirname "$0")";export base="$(pwd)"
-output_file=diagnose.result;rm $output_file
+cd "$(dirname "$0")" || exit 1
+export base="$(pwd)"
+output_file="diagnose.result"
+rm -f "$output_file"
 export LANG=C;export LC_ALL=C
 case $(whoami) in
   root)echo -e "${STY_RED}[$0]: This script is NOT to be executed with sudo or as root. Aborting...${STY_RST}";exit 1;;
 esac
 
 
-x() { _exec "$@" 2>&1 | tee -a $output_file ; }
-e() { _box "$@" | tee -a $output_file ; }
+x() { _exec "$@" 2>&1 | tee -a "$output_file" ; }
+e() { _box "$@" | tee -a "$output_file" ; }
 _box() {
   length=$(echo "$1" | wc -L);total_width=$((length + 2))
   #line=$(printf "═%.0s" $(seq 1 $total_width))
@@ -51,9 +53,16 @@ _check_distro() {
   lsb_release -a || cat /etc/os-release || cat /etc/lsb-release
 }
 _check_venv() {
-  source $(eval echo $ILLOGICAL_IMPULSE_VIRTUAL_ENV)/bin/activate
-  which python
-  deactivate
+  local venv_path="${ILLOGICAL_IMPULSE_VIRTUAL_ENV:-}"
+  if [[ -n "$venv_path" ]] && [[ -f "${venv_path}/bin/activate" ]]; then
+    # shellcheck source=/dev/null
+    source "${venv_path}/bin/activate"
+    which python
+    deactivate
+  else
+    echo "Virtual environment not found or ILLOGICAL_IMPULSE_VIRTUAL_ENV not set"
+    return 1
+  fi
 }
 _check_quickshell_version() {
   pacman -Q | grep -E 'quickshell|qt6-base'
@@ -70,7 +79,7 @@ x git submodule status --recursive
 
 e "Checking distro"
 x _check_distro_id
-x cat os-release
+x cat /etc/os-release
 #x _check_distro 
 
 e "Checking variables"

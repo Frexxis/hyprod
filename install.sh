@@ -15,6 +15,12 @@ REPO_URL="https://github.com/Frexxis/hyprod"
 INSTALL_DIR="${HYPROD_DIR:-$HOME/.local/share/hyprod}"
 BRANCH="${HYPROD_BRANCH:-main}"
 
+# Validate HOME early
+if [[ -z "${HOME:-}" ]] || [[ ! -d "$HOME" ]]; then
+    echo "ERROR: HOME environment variable is not set or invalid" >&2
+    exit 1
+fi
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -79,7 +85,8 @@ For other distros, manual installation is possible:
     # Check Hyprland
     if command -v hyprctl &>/dev/null; then
         local hypr_version
-        hypr_version=$(hyprctl version 2>/dev/null | grep -oP 'Tag: v?\K[0-9.]+' | head -1 || echo "unknown")
+        hypr_version=$(hyprctl version 2>/dev/null | sed -n 's/.*Tag: v\{0,1\}\([0-9.]*\).*/\1/p' | head -1)
+        hypr_version="${hypr_version:-unknown}"
         info "Hyprland found (version: $hypr_version)"
     elif command -v Hyprland &>/dev/null; then
         info "Hyprland found"
@@ -120,7 +127,7 @@ clone_repo() {
     if [[ -d "$INSTALL_DIR/.git" ]]; then
         info "Existing installation found at $INSTALL_DIR"
         echo -n "Update to latest version? [Y/n] "
-        read -r response
+        read -r -t 30 response || response=""
         if [[ "${response,,}" != "n" ]]; then
             info "Updating..."
             git -C "$INSTALL_DIR" fetch origin "$BRANCH"
@@ -305,7 +312,7 @@ case "${1:-}" in
         fi
         if [[ -d "$INSTALL_DIR" ]]; then
             echo -n "Remove $INSTALL_DIR? [y/N] "
-            read -r response
+            read -r -t 30 response || response=""
             if [[ "${response,,}" == "y" ]]; then
                 rm -rf "$INSTALL_DIR"
                 info "Removed $INSTALL_DIR"
