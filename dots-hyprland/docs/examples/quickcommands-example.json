@@ -1,0 +1,40 @@
+{
+  "commands": [
+    {
+      "label": "Dev Server",
+      "icon": "rocket_launch",
+      "cmd": "npm run dev",
+      "terminal": true
+    },
+    {
+      "label": "Build",
+      "icon": "construction",
+      "cmd": "npm run build",
+      "terminal": false
+    },
+    {
+      "label": "Test",
+      "icon": "science",
+      "cmd": "npm test",
+      "terminal": true
+    },
+    {
+      "label": "Docker Up",
+      "icon": "deployed_code",
+      "cmd": "docker-compose up -d",
+      "terminal": false
+    },
+    {
+      "label": "Git Pull",
+      "icon": "cloud_download",
+      "cmd": "git pull origin main",
+      "terminal": true
+    },
+    {
+      "label": "Clear Cache",
+      "icon": "delete_sweep",
+      "cmd": "rm -rf node_modules/.cache",
+      "terminal": false
+    }
+  ]
+}

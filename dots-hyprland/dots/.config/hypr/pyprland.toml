@@ -1,0 +1,12 @@
+[pyprland]
+plugins = ["expose", "layout_center", "magnify", "fetch_client_menu"]
+
+[expose]
+include_special = false
+
+[layout_center]
+margin = 60
+offset = [0, 30]
+
+[magnify]
+factor = 2
