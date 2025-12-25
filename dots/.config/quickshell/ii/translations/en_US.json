@@ -516,7 +516,6 @@
   "LMB to enable/disable\nRMB to toggle size\nScroll to swap position": "LMB to enable/disable\nRMB to toggle size\nScroll to swap position",
   "Identify Music": "Identify Music",
   "Quick toggles": "Quick toggles",
-  "Hide sussy/anime wallpapers": "Hide sussy/anime wallpapers",
   "Android": "Android",
   "Show": "Show",
   "Muted": "Muted",
@@ -585,5 +584,11 @@
   "Recognize music": "Recognize music",
   "Stroke width": "Stroke width",
   "Use varying shapes for password characters": "Use varying shapes for password characters",
-  "Battery full": "Battery full"
+  "Battery full": "Battery full",
+  "Apply to file": "Apply to file",
+  "Apply code to file": "Apply code to file",
+  "Overwrite a file with this code block": "Overwrite a file with this code block",
+  "File path": "File path",
+  "File path is required": "File path is required",
+  "Explain code": "Explain code"
 }

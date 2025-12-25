@@ -8,6 +8,7 @@ import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import Quickshell
+import Quickshell.Io
 import org.kde.syntaxhighlighting
 
 ColumnLayout {
@@ -25,8 +26,63 @@ ColumnLayout {
     property real codeBlockBackgroundRounding: Appearance.rounding.small
     property real codeBlockHeaderPadding: 3
     property real codeBlockComponentSpacing: 2
+    property bool showApplyDialog: false
+    property string applyPath: ""
+    property string applyError: ""
 
     spacing: codeBlockComponentSpacing
+
+    function normalizeApplyPath(path) {
+        const trimmed = (path ?? "").toString().trim();
+        if (trimmed.length === 0) return "";
+        if (trimmed === "~") {
+            return FileUtils.trimFileProtocol(Directories.home);
+        }
+        if (trimmed.startsWith("~/")) {
+            return FileUtils.trimFileProtocol(Directories.home) + trimmed.substring(1);
+        }
+        return trimmed;
+    }
+
+    function openApplyDialog() {
+        root.applyPath = "";
+        root.applyError = "";
+        root.showApplyDialog = true;
+    }
+
+    function applyCodeToFile() {
+        const target = normalizeApplyPath(root.applyPath);
+        if (target.length === 0) {
+            root.applyError = Translation.tr("File path is required");
+            return;
+        }
+
+        const parentDir = FileUtils.parentDirectory(target);
+        if (parentDir.length > 0) {
+            Quickshell.execDetached(["mkdir", "-p", parentDir]);
+        }
+
+        applyFileView.path = Qt.resolvedUrl(target);
+        applyFileView.setText(String(segmentContent));
+        root.showApplyDialog = false;
+        root.applyError = "";
+
+        Quickshell.execDetached([
+            "notify-send",
+            Translation.tr("Code saved to file"),
+            Translation.tr("Saved to %1").arg(target),
+            "-a",
+            "Shell"
+        ]);
+    }
+
+    function explainCode() {
+        const codeText = String(segmentContent ?? "").trim();
+        if (codeText.length === 0) return;
+        const lang = root.displayLang || "text";
+        const prompt = Translation.tr("Explain this code") + ":\n\n```" + lang + "\n" + codeText + "\n```";
+        Ai.sendUserMessage(prompt);
+    }
 
     Rectangle { // Code background
         Layout.fillWidth: true
@@ -115,6 +171,28 @@ ColumnLayout {
                     }
                 }
                 AiMessageControlButton {
+                    id: applyCodeButton
+                    buttonIcon: activated ? "check" : "save_as"
+
+                    onClicked: {
+                        openApplyDialog();
+                        applyCodeButton.activated = true;
+                        applyIconTimer.restart();
+                    }
+
+                    Timer {
+                        id: applyIconTimer
+                        interval: 1500
+                        repeat: false
+                        onTriggered: {
+                            applyCodeButton.activated = false
+                        }
+                    }
+                    StyledToolTip {
+                        text: Translation.tr("Apply to file")
+                    }
+                }
+                AiMessageControlButton {
                     id: runInTerminalButton
                     visible: ["bash", "sh", "zsh", "fish", "command"].includes(root.segmentLang)
                     buttonIcon: activated ? "check" : "play_arrow"
@@ -137,6 +215,28 @@ ColumnLayout {
                     }
                     StyledToolTip {
                         text: Translation.tr("Run in terminal")
+                    }
+                }
+                AiMessageControlButton {
+                    id: explainButton
+                    buttonIcon: activated ? "check" : "lightbulb"
+
+                    onClicked: {
+                        explainCode();
+                        explainButton.activated = true;
+                        explainIconTimer.restart();
+                    }
+
+                    Timer {
+                        id: explainIconTimer
+                        interval: 1500
+                        repeat: false
+                        onTriggered: {
+                            explainButton.activated = false
+                        }
+                    }
+                    StyledToolTip {
+                        text: Translation.tr("Explain code")
                     }
                 }
             }
@@ -314,6 +414,56 @@ ColumnLayout {
             //         event.accepted = false
             //     }
             // }
+        }
+    }
+
+    FileView {
+        id: applyFileView
+        path: ""
+    }
+
+    WindowDialog {
+        id: applyDialog
+        anchors.fill: parent
+        show: root.showApplyDialog
+        onDismiss: root.showApplyDialog = false
+
+        WindowDialogTitle { text: Translation.tr("Apply code to file") }
+
+        WindowDialogParagraph {
+            text: Translation.tr("Overwrite a file with this code block")
+        }
+
+        MaterialTextField {
+            Layout.fillWidth: true
+            placeholderText: Translation.tr("File path")
+            text: root.applyPath
+            onTextChanged: {
+                root.applyPath = text;
+                root.applyError = "";
+            }
+        }
+
+        StyledText {
+            Layout.fillWidth: true
+            visible: root.applyError.length > 0
+            text: root.applyError
+            color: Appearance.colors.colError
+            wrapMode: Text.Wrap
+        }
+
+        WindowDialogButtonRow {
+            Layout.fillWidth: true
+
+            DialogButton {
+                buttonText: Translation.tr("Cancel")
+                onClicked: root.showApplyDialog = false
+            }
+
+            DialogButton {
+                buttonText: Translation.tr("Save")
+                onClicked: applyCodeToFile()
+            }
         }
     }
 }

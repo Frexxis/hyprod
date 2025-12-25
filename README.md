@@ -77,7 +77,7 @@ bash <(curl -s https://raw.githubusercontent.com/Frexxis/hyprod/main/install.sh)
 ```bash
 git clone https://github.com/Frexxis/hyprod.git
 cd hyprod
-./dots-hyprland/setup install
+./setup install
 ```
 
 ### After Installation
@@ -110,6 +110,8 @@ cd hyprod
 | `Super + Shift + G` | lazygit (scratchpad) |
 | `Super + Shift + B` | btop (scratchpad) |
 | `Super + Alt + C` | Claude Code CLI |
+| `Super + Shift + D` | lazydocker (scratchpad) |
+| `Super + P` | Password manager |
 
 ---
 
@@ -117,16 +119,11 @@ cd hyprod
 
 ```
 hyprod/
-├── dots-hyprland/
-│   ├── dots/.config/
-│   │   ├── hypr/         # Hyprland configs
-│   │   ├── kitty/        # Terminal config
-│   │   ├── quickshell/   # QML shell (UI)
-│   │   └── matugen/      # Dynamic theming
-│   ├── dots-extra/       # Extra configs
-│   └── setup             # Installation script
-├── tools/                # Helper tools
-└── docs/                 # Documentation
+├── dots/.config/          # Hyprland + Quickshell configs
+├── dots-extra/            # Extra configs
+├── docs/                  # Documentation
+├── setup                  # Installation script
+└── install.sh             # One-liner installer
 ```
 
 ---
@@ -148,6 +145,9 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for details.
 ## 📚 Documentation
 
 - **[QUICKSTART.md](./docs/QUICKSTART.md)**: Quick start guide
+- **[INSTALL.md](./INSTALL.md)**: Full installation guide
+- **[KEYBINDS.md](./KEYBINDS.md)**: Keybind reference
+- **[CHANGELOG.md](./CHANGELOG.md)**: Release notes
 - **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)**: Troubleshooting guide
 - **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Contribution guidelines
 

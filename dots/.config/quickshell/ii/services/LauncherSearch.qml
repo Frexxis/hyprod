@@ -13,6 +13,39 @@ Singleton {
 
     property string query: ""
 
+    // Memory management for search results
+    property var _previousResults: []
+
+    onResultsChanged: {
+        // Destroy old result objects to prevent memory leaks
+        for (let result of _previousResults) {
+            if (result && result.destroy) {
+                // Destroy nested action objects too
+                if (result.actions) {
+                    for (let action of result.actions) {
+                        if (action && action.destroy) action.destroy();
+                    }
+                }
+                result.destroy();
+            }
+        }
+        _previousResults = results.slice();
+    }
+
+    Component.onDestruction: {
+        // Final cleanup
+        for (let result of _previousResults) {
+            if (result && result.destroy) {
+                if (result.actions) {
+                    for (let action of result.actions) {
+                        if (action && action.destroy) action.destroy();
+                    }
+                }
+                result.destroy();
+            }
+        }
+    }
+
     function ensurePrefix(prefix) {
         if ([Config.options.search.prefix.action, Config.options.search.prefix.app, Config.options.search.prefix.clipboard, Config.options.search.prefix.emojis, Config.options.search.prefix.math, Config.options.search.prefix.shellCommand, Config.options.search.prefix.webSearch,].some(i => root.query.startsWith(i))) {
             root.query = prefix + root.query.slice(1);

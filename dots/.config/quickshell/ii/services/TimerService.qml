@@ -107,7 +107,7 @@ Singleton {
 
     Timer {
         id: stopwatchTimer
-        interval: 10
+        interval: 50  // 20Hz polling - smooth display, low CPU
         running: root.stopwatchRunning
         repeat: true
         onTriggered: refreshStopwatch()
