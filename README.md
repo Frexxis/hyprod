@@ -1,121 +1,301 @@
-# hyprod
+<div align="center">
 
-> Developer-Focused Hyprland Rice
+# 🚀 hyprod
 
-A productivity-oriented Hyprland dotfiles collection forked from [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland), optimized for developers and "vibe coders".
+**Developer-Focused Hyprland Rice**
 
-## Features
+*A productivity-oriented Hyprland configuration optimized for developers and "vibe coders"*
 
-### Core Features
-- **Launch-or-Focus** - Smart app switching (focus if open, launch if not)
-- **Developer Sidebar** - Git status, system monitor, project switcher
-- **Claude Code CLI** - AI assistant integration
-- **Material You Theming** - Dynamic colors via Matugen
+[![License](https://img.shields.io/badge/license-GPL--3.0-blue.svg)](LICENSE)
+[![Hyprland](https://img.shields.io/badge/Hyprland-0.40%2B-9b59b6.svg)](https://hyprland.org)
+[![Arch Linux](https://img.shields.io/badge/Arch%20Linux-Supported-1793d1.svg)](https://archlinux.org)
+[![Quickshell](https://img.shields.io/badge/Quickshell-QML%2FQt6-41cd52.svg)](https://github.com/yshui/quickshell)
 
-### What's Different from end-4?
-| Removed | Added |
-|---------|-------|
-| Anime booru browser | Git widget |
-| Translator module | System monitor |
-| 1ms timer bug | Project switcher |
-| Memory leaks | Quick commands |
+[Özellikler](#-özellikler) • [Kurulum](#-kurulum) • [Kullanım](#-kullanım) • [Katkıda Bulunma](#-katkıda-bulunma)
 
-## Screenshots
+</div>
 
-*Coming soon after implementation*
+---
 
-## Requirements
+## 📖 Hakkında
 
-### Minimum
-- Hyprland 0.40+
-- Quickshell (QML/Qt6)
-- 4 GB RAM
-- Wayland-compatible GPU
+**hyprod**, [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland) projesinden fork edilmiş, yazılım geliştiriciler ve "vibe coderlar" için optimize edilmiş bir Hyprland dotfiles koleksiyonudur.
 
-### Dependencies
+### 🎯 Temel Felsefe
+
+- **Keyboard-First**: Tüm işlemler klavye ile yapılabilir
+- **Developer-Centric**: Git, proje yönetimi ve AI araçları entegre
+- **Performance**: Gereksiz modüller kaldırıldı, performans optimizasyonları yapıldı
+- **Material You**: Dinamik renk temaları ile modern görünüm
+
+### 🔄 end-4/dots-hyprland'dan Farklar
+
+| Kaldırılanlar | Eklenenler |
+|---------------|------------|
+| ❌ Anime booru browser | ✅ Git widget |
+| ❌ Translator modülü | ✅ System monitor |
+| ❌ 1ms timer bug | ✅ Project switcher |
+| ❌ Memory leak'ler | ✅ Quick commands |
+| | ✅ Claude Code CLI entegrasyonu |
+
+---
+
+## ✨ Özellikler
+
+### 🎨 Temel Özellikler
+
+- **🎯 Launch-or-Focus**: Akıllı uygulama geçişi (açıksa focus, yoksa başlat)
+- **💻 Developer Sidebar**: Git durumu, sistem monitörü, proje değiştirici
+- **🤖 Claude Code CLI**: AI asistan entegrasyonu
+- **🎨 Material You Theming**: Matugen ile dinamik renkler
+- **⚡ Performans Optimizasyonları**: Timer düzeltmeleri ve memory leak çözümleri
+
+### 🛠️ Developer Araçları
+
+- **Git Widget**: Branch durumu, değişen dosyalar, hızlı commit
+- **System Monitor**: CPU, RAM, Disk kullanımı
+- **Project Switcher**: zoxide entegrasyonu ile proje geçişi
+- **Quick Commands**: Özelleştirilebilir hızlı komutlar
+- **Scratchpad Entegrasyonları**: lazygit, btop için hazır scratchpad'ler
+
+### 🎭 Görsel Özellikler
+
+- Material Design 3 / Material You
+- Dinamik tema desteği (Matugen)
+- Dark/Light mode
+- Tutarlı ikonografi (Material Symbols)
+
+---
+
+## 📸 Ekran Görüntüleri
+
+> *Ekran görüntüleri yakında eklenecek*
+
+---
+
+## 📋 Gereksinimler
+
+### Minimum Sistem Gereksinimleri
+
+| Bileşen | Minimum | Önerilen |
+|---------|---------|-----------|
+| **RAM** | 4 GB | 8+ GB |
+| **CPU** | 2 core | 4+ core |
+| **Disk** | 500 MB | 1 GB |
+| **GPU** | Wayland uyumlu | - |
+
+### Yazılım Gereksinimleri
+
+- **Hyprland** 0.40+
+- **Quickshell** (QML/Qt6)
+- **Arch Linux** veya Arch tabanlı dağıtım (AUR erişimi)
+
+### Bağımlılıklar
+
+#### Temel Paketler
 
 ```bash
-# Core (via AUR)
+# Core (AUR üzerinden)
 yay -S quickshell-git hyprland kitty rofi-wayland
 
-# Developer tools
+# Developer araçları
 yay -S lazygit zoxide jq ripgrep
 
-# Optional
+# Opsiyonel
 yay -S pyprland btop lazydocker
 ```
 
-## Installation
+#### Fontlar
 
-### Quick Install (Recommended)
+```bash
+yay -S ttf-material-symbols-variable-git ttf-jetbrains-mono-nerd
+```
+
+---
+
+## 🚀 Kurulum
+
+### Hızlı Kurulum (Önerilen)
 
 ```bash
 bash <(curl -s https://raw.githubusercontent.com/Frexxis/hyprod/main/install.sh)
 ```
 
-This will:
-1. Check system compatibility (Arch-based + Hyprland)
-2. Clone hyprod to `~/.local/share/hyprod`
-3. Install dependencies and copy configs
-4. Verify installation
+Bu komut şunları yapar:
+1. ✅ Sistem uyumluluğunu kontrol eder (Arch tabanlı + Hyprland)
+2. ✅ hyprod'u `~/.local/share/hyprod` konumuna klonlar
+3. ✅ Bağımlılıkları kurar ve konfigürasyonları kopyalar
+4. ✅ Kurulumu doğrular
 
-### Manual Install
+### Manuel Kurulum
 
 ```bash
-git clone https://github.com/Frexxis/hyprod
+# Repo'yu klonla
+git clone https://github.com/Frexxis/hyprod.git
 cd hyprod
-./setup install
+
+# Kurulum scriptini çalıştır
+./dots-hyprland/setup install
 ```
 
-### After Installation
+### Kurulum Sonrası
 
-1. Log out and log back in
-2. Select Hyprland at login screen
-3. Or if already in Hyprland: `hyprctl reload`
+1. **Oturumu kapat ve tekrar giriş yap**
+2. **Giriş ekranında Hyprland'ı seç**
+3. **Veya zaten Hyprland'taysan:** `hyprctl reload`
 
-> **Troubleshooting?** See [TROUBLESHOOTING.md](./TROUBLESHOOTING.md)
+> 💡 **Sorun mu yaşıyorsun?** [TROUBLESHOOTING.md](./TROUBLESHOOTING.md) dosyasına bakabilirsin.
 
-## Keybinds
+---
 
-| Keybind | Action |
-|---------|--------|
+## ⌨️ Kullanım
+
+### Temel Kısayollar
+
+| Kısayol | Aksiyon |
+|---------|---------|
 | `Super + Return` | Terminal (Kitty) |
-| `Super + B` | Browser |
-| `Super + E` | File Manager |
-| `Super + Tab` | Workspace Overview |
-| `Super + A` | Developer Sidebar |
+| `Super + B` | Tarayıcı |
+| `Super + E` | Dosya Yöneticisi |
+| `Super + Tab` | Workspace Genel Bakış |
+| `Super + A` | Developer Sidebar (Sol) |
+| `Super + Shift + N` | Bildirimler (Sağ) |
+| `Super + Q` | Pencereyi Kapat |
+| `Super + Space` | Uygulama Başlatıcı |
+
+### Developer Kısayolları
+
+| Kısayol | Aksiyon |
+|---------|---------|
 | `Super + Shift + G` | lazygit (scratchpad) |
 | `Super + Shift + H` | btop (scratchpad) |
+| `Super + Shift + I` | Claude Code CLI |
 
-## Project Structure
+### Sidebar Widget'ları
+
+Sol sidebar (`Super + A`) içinde:
+
+- **🤖 Intelligence**: AI Chat (Claude Code CLI)
+- **📦 Git**: Repository durumu ve hızlı commit
+- **📁 Projects**: Son projeler ve hızlı geçiş
+- **⚡ Commands**: Özelleştirilebilir hızlı komutlar
+- **📊 System**: Sistem kaynak kullanımı
+
+---
+
+## 📁 Proje Yapısı
 
 ```
 hyprod/
-├── .github/              # GitHub workflows & templates
-├── docs/examples/        # Configuration examples
-├── dots/                 # Dotfiles
-│   └── .config/
-│       ├── hypr/         # Hyprland configs
-│       ├── kitty/        # Terminal config
-│       ├── quickshell/   # QML shell (UI)
-│       └── matugen/      # Dynamic theming
-├── dots-extra/           # Extra configs
-├── sdata/                # Setup data
-├── setup                 # Installation script
-├── diagnose              # Diagnostic tool
-├── install.sh            # One-liner installer
+├── .github/                    # GitHub workflows & templates
+├── docs/                       # Dokümantasyon
+│   ├── examples/              # Konfigürasyon örnekleri
+│   └── memory-bank/           # Proje bellek bankası
+├── dots-hyprland/             # Ana dotfiles klasörü
+│   ├── dots/                  # Dotfiles
+│   │   └── .config/
+│   │       ├── hypr/         # Hyprland konfigürasyonları
+│   │       ├── kitty/        # Terminal konfigürasyonu
+│   │       ├── quickshell/   # QML shell (UI)
+│   │       └── matugen/      # Dinamik tema
+│   ├── dots-extra/           # Ekstra konfigürasyonlar
+│   ├── sdata/                # Kurulum verileri
+│   └── setup                 # Kurulum scripti
+├── tools/                     # Yardımcı araçlar
+│   ├── backup-config.sh
+│   ├── doctor.sh
+│   └── run-quickshell.sh
+├── install.sh                 # Tek satır kurulum scripti
+├── diagnose                   # Tanılama aracı
 └── README.md
 ```
 
-## Contributing
+---
 
-See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
+## 🛠️ Geliştirme
 
-## Credits
+### Yerel Geliştirme Ortamı
 
-- **Base Project:** [end-4/dots-hyprland](https://github.com/end-4/dots-hyprland)
-- **Tools:** lazygit, zoxide, pyprland, btop
+```bash
+# Repo'yu klonla
+git clone https://github.com/Frexxis/hyprod.git
+cd hyprod
 
-## License
+# Feature branch oluştur
+git checkout -b feature/yeni-ozellik
 
-GPL-3.0 (inherited from end-4/dots-hyprland)
+# Değişiklikleri test et
+./dots-hyprland/setup install
+hyprctl reload
+```
+
+### Test Etme
+
+```bash
+# Quickshell'i yeniden yükle
+quickshell -c ~/.config/quickshell/ii/shell.qml
+
+# Hyprland konfigürasyonunu yeniden yükle
+hyprctl reload
+
+# Hataları kontrol et
+journalctl -xe | grep -E "(quickshell|hyprland)"
+```
+
+Detaylı bilgi için [CONTRIBUTING.md](./CONTRIBUTING.md) dosyasına bakabilirsin.
+
+---
+
+## 🤝 Katkıda Bulunma
+
+Katkılarınızı bekliyoruz! Lütfen:
+
+1. **Fork** yapın
+2. **Feature branch** oluşturun (`git checkout -b feature/amazing-feature`)
+3. **Commit** yapın (`git commit -m 'feat: amazing feature eklendi'`)
+4. **Push** yapın (`git push origin feature/amazing-feature`)
+5. **Pull Request** açın
+
+Detaylı bilgi için [CONTRIBUTING.md](./CONTRIBUTING.md) dosyasına bakabilirsin.
+
+---
+
+## 📚 Dokümantasyon
+
+- **[QUICKSTART.md](./docs/QUICKSTART.md)**: Hızlı başlangıç rehberi
+- **[PRD.md](./docs/PRD.md)**: Ürün gereksinimleri dokümanı
+- **[TROUBLESHOOTING.md](./TROUBLESHOOTING.md)**: Sorun giderme rehberi
+- **[CONTRIBUTING.md](./CONTRIBUTING.md)**: Katkıda bulunma rehberi
+
+---
+
+## 🙏 Teşekkürler
+
+- **[end-4/dots-hyprland](https://github.com/end-4/dots-hyprland)**: Temel proje
+- **[Quickshell](https://github.com/yshui/quickshell)**: QML shell framework
+- **[Hyprland](https://hyprland.org)**: Wayland compositor
+- **[lazygit](https://github.com/jesseduffield/lazygit)**: Git TUI
+- **[zoxide](https://github.com/ajeetdsouza/zoxide)**: Directory jumper
+- **[pyprland](https://github.com/hyprland-community/pyprland)**: Hyprland plugin sistemi
+
+---
+
+## 📄 Lisans
+
+Bu proje **GPL-3.0** lisansı altında lisanslanmıştır. Detaylar için [LICENSE](./LICENSE) dosyasına bakabilirsin.
+
+---
+
+## ⭐ Yıldız Ver
+
+Bu projeyi beğendiysen, yıldız vermeyi unutma! ⭐
+
+---
+
+<div align="center">
+
+**Made with ❤️ for developers**
+
+[🔝 Başa Dön](#-hyprod)
+
+</div>
