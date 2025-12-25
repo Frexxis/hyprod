@@ -603,6 +603,11 @@ Singleton {
                 property bool centerTitle: true
             }
 
+            /**
+             * Delay for race condition workarounds.
+             * Used in: Overview, OverviewWidget, NotificationCenter, Cliphist, MaterialThemeLoader
+             * TODO: Investigate root causes and replace with proper state management
+             */
             property JsonObject hacks: JsonObject {
                 property int arbitraryRaceConditionDelay: 20 // milliseconds
             }
@@ -614,7 +619,7 @@ Singleton {
                 }
                 property JsonObject triggerCondition: JsonObject {
                     property list<string> networkNameKeywords: ["airport", "cafe", "college", "company", "eduroam", "free", "guest", "public", "school", "university"]
-                    property list<string> fileKeywords: ["anime", "booru", "ecchi", "hentai", "yande.re", "konachan", "breast", "nipples", "pussy", "nsfw", "spoiler", "girl"]
+                    property list<string> fileKeywords: ["nsfw", "spoiler"]
                     property list<string> linkKeywords: ["hentai", "porn", "sukebei", "hitomi.la", "rule34", "gelbooru", "fanbox", "dlsite"]
                 }
             }

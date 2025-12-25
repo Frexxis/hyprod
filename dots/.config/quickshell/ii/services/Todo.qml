@@ -70,8 +70,21 @@ Singleton {
         path: Qt.resolvedUrl(root.filePath)
         onLoaded: {
             const fileContents = todoFileView.text()
-            root.list = JSON.parse(fileContents)
-            console.log("[To Do] File loaded")
+            try {
+                const parsed = JSON.parse(fileContents)
+                if (Array.isArray(parsed)) {
+                    root.list = parsed
+                    console.log("[To Do] File loaded successfully")
+                } else {
+                    console.warn("[To Do] Invalid format, expected array. Resetting.")
+                    root.list = []
+                    todoFileView.setText(JSON.stringify(root.list))
+                }
+            } catch (e) {
+                console.error("[To Do] JSON parse error: " + e.message)
+                root.list = []
+                todoFileView.setText(JSON.stringify(root.list))
+            }
         }
         onLoadFailed: (error) => {
             if(error == FileViewError.FileNotFound) {

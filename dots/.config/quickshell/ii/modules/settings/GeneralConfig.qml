@@ -306,7 +306,7 @@ ContentPage {
 
     ContentSection {
         icon: "work_alert"
-        title: Translation.tr("Work safety")
+        title: Translation.tr("Content filtering")
 
         ConfigSwitch {
             buttonIcon: "assignment"
@@ -318,7 +318,7 @@ ContentPage {
         }
         ConfigSwitch {
             buttonIcon: "wallpaper"
-            text: Translation.tr("Hide sussy/anime wallpapers")
+            text: Translation.tr("Filter flagged wallpapers")
             checked: Config.options.workSafety.enable.wallpaper
             onCheckedChanged: {
                 Config.options.workSafety.enable.wallpaper = checked;

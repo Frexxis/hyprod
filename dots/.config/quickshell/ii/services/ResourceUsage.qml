@@ -60,8 +60,8 @@ Singleton {
     }
 
 	Timer {
-		interval: 3000
-        running: true 
+		interval: Math.max(250, Config.options?.resources?.updateInterval ?? 3000)
+        running: true
         repeat: true
 		onTriggered: {
             // Reload files
@@ -93,7 +93,7 @@ Singleton {
             }
 
             root.updateHistories()
-            interval = Math.max(250, Config.options?.resources?.updateInterval ?? 3000)
+            // interval binding moved to property declaration to avoid loop
         }
 	}
 

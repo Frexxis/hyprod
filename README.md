@@ -108,8 +108,8 @@ cd hyprod
 | Keybind | Action |
 |---------|--------|
 | `Super + Shift + G` | lazygit (scratchpad) |
-| `Super + Shift + H` | btop (scratchpad) |
-| `Super + Shift + I` | Claude Code CLI |
+| `Super + Shift + B` | btop (scratchpad) |
+| `Super + Alt + C` | Claude Code CLI |
 
 ---
 

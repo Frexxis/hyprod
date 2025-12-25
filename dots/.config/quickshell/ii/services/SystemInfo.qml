@@ -25,7 +25,7 @@ Singleton {
 
     Timer {
         triggeredOnStart: true
-        interval: 1
+        interval: 1000  // triggeredOnStart handles immediate execution
         running: true
         repeat: false
         onTriggered: {
