@@ -589,5 +589,21 @@
   "Install zoxide to enable this tab": "Bu sekmeyi etkinleştirmek için zoxide'i kurun",
   "Staged: %1": "Hazırlanmış: %1",
   "Label is required": "Etiket gereklidir",
-  "Search projects": "Projeleri ara"
+  "Search projects": "Projeleri ara",
+  "Pending": "Beklemede",
+  "Running": "Çalışıyor",
+  "Error": "Hata",
+  "Rejected": "Reddedildi",
+  "Approved": "Onaylandı",
+  "File: %1": "Dosya: %1",
+  "Editing: %1": "Düzenleniyor: %1",
+  "Writing: %1": "Yazılıyor: %1",
+  "Command: %1": "Komut: %1",
+  "Pattern: %1": "Desen: %1",
+  "Query: %1": "Sorgu: %1",
+  "URL: %1": "URL: %1",
+  "Operation aborted": "İşlem durduruldu",
+  "Operation aborted by user": "İşlem kullanıcı tarafından durduruldu",
+  "Abort operation": "İşlemi durdur",
+  "Pending tool approvals\nClick to scroll to them": "Bekleyen araç onayları\nGörmek için tıklayın"
 }

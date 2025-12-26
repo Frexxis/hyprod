@@ -590,5 +590,21 @@
   "Overwrite a file with this code block": "Overwrite a file with this code block",
   "File path": "File path",
   "File path is required": "File path is required",
-  "Explain code": "Explain code"
+  "Explain code": "Explain code",
+  "Pending": "Pending",
+  "Running": "Running",
+  "Error": "Error",
+  "Rejected": "Rejected",
+  "Approved": "Approved",
+  "File: %1": "File: %1",
+  "Editing: %1": "Editing: %1",
+  "Writing: %1": "Writing: %1",
+  "Command: %1": "Command: %1",
+  "Pattern: %1": "Pattern: %1",
+  "Query: %1": "Query: %1",
+  "URL: %1": "URL: %1",
+  "Operation aborted": "Operation aborted",
+  "Operation aborted by user": "Operation aborted by user",
+  "Abort operation": "Abort operation",
+  "Pending tool approvals\nClick to scroll to them": "Pending tool approvals\nClick to scroll to them"
 }

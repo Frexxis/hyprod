@@ -400,5 +400,21 @@
   "Install zoxide to enable this tab": "このタブを有効にするには zoxide をインストールしてください",
   "Staged: %1": "ステージ済み: %1",
   "Label is required": "ラベルが必要です",
-  "Search projects": "プロジェクトを検索"
+  "Search projects": "プロジェクトを検索",
+  "Pending": "保留中",
+  "Running": "実行中",
+  "Error": "エラー",
+  "Rejected": "拒否済み",
+  "Approved": "承認済み",
+  "File: %1": "ファイル: %1",
+  "Editing: %1": "編集中: %1",
+  "Writing: %1": "書き込み中: %1",
+  "Command: %1": "コマンド: %1",
+  "Pattern: %1": "パターン: %1",
+  "Query: %1": "クエリ: %1",
+  "URL: %1": "URL: %1",
+  "Operation aborted": "操作が中止されました",
+  "Operation aborted by user": "ユーザーにより操作が中止されました",
+  "Abort operation": "操作を中止",
+  "Pending tool approvals\nClick to scroll to them": "保留中のツール承認\nクリックしてスクロール"
 }

@@ -317,5 +317,21 @@
   "Install zoxide to enable this tab": "Cài đặt zoxide để bật tab này",
   "Staged: %1": "Đã stage: %1",
   "Label is required": "Yêu cầu nhãn",
-  "Search projects": "Tìm kiếm dự án"
+  "Search projects": "Tìm kiếm dự án",
+  "Pending": "Đang chờ",
+  "Running": "Đang chạy",
+  "Error": "Lỗi",
+  "Rejected": "Đã từ chối",
+  "Approved": "Đã phê duyệt",
+  "File: %1": "Tệp: %1",
+  "Editing: %1": "Đang sửa: %1",
+  "Writing: %1": "Đang ghi: %1",
+  "Command: %1": "Lệnh: %1",
+  "Pattern: %1": "Mẫu: %1",
+  "Query: %1": "Truy vấn: %1",
+  "URL: %1": "URL: %1",
+  "Operation aborted": "Thao tác đã bị hủy",
+  "Operation aborted by user": "Thao tác đã bị hủy bởi người dùng",
+  "Abort operation": "Hủy thao tác",
+  "Pending tool approvals\nClick to scroll to them": "Các phê duyệt công cụ đang chờ\nNhấp để cuộn đến"
 }

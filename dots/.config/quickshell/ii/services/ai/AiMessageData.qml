@@ -21,4 +21,12 @@ QtObject {
     property string functionResponse
     property bool functionPending: false
     property bool visibleToUser: true
+
+    // Tool use tracking for Claude Code
+    // Each tool use: {id, name, input, status, result, isError}
+    // status: "pending", "approved", "running", "done", "error", "rejected"
+    property var toolUses: []
+    property bool hasToolActivity: toolUses.length > 0
+    property string currentToolInput: ""  // Accumulator for input_json_delta
+    property string currentToolId: ""     // Currently accumulating tool's ID
 }

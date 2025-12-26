@@ -361,6 +361,26 @@ Rectangle {
             }
         }
 
+        // Claude Code tool activity
+        ColumnLayout {
+            visible: root.messageData?.toolUses?.length > 0
+            spacing: 4
+            Layout.fillWidth: true
+            Layout.topMargin: 4
+
+            Repeater {
+                model: ScriptModel {
+                    values: root.messageData?.toolUses || []
+                }
+                delegate: ToolActivityBlock {
+                    required property var modelData
+                    toolData: modelData
+                    messageId: root.messageData ? Ai.messageIDs[root.messageIndex] : ""
+                    Layout.fillWidth: true
+                }
+            }
+        }
+
     }
 }
 

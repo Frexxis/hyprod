@@ -195,6 +195,71 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
 `, Ai.interfaceRole);
             }
         },
+        // Claude Code specific commands
+        {
+            name: "mode",
+            description: Translation.tr("Set Claude Code tool mode: safe (read-only), interactive (with approval), full (all tools)"),
+            execute: args => {
+                const mode = (args[0] ?? "").toLowerCase();
+                if (!Ai.currentApiStrategy?.toolMode) {
+                    Ai.addMessage(Translation.tr("Tool mode is only available for Claude Code model"), Ai.interfaceRole);
+                    return;
+                }
+                if (args.length === 0 || args[0] === "get") {
+                    Ai.addMessage(Translation.tr("Current tool mode: **%1**\n\nAvailable modes:\n- **safe**: Read-only operations (Read, Glob, Grep, WebSearch)\n- **interactive**: Edit operations with approval (Edit, Write, Bash)\n- **full**: All tools without restrictions").arg(Ai.currentApiStrategy.toolMode), Ai.interfaceRole);
+                    return;
+                }
+                if (["safe", "interactive", "full"].includes(mode)) {
+                    Ai.currentApiStrategy.toolMode = mode;
+                    Ai.addMessage(Translation.tr("Tool mode set to: **%1**").arg(mode), Ai.interfaceRole);
+                } else {
+                    Ai.addMessage(Translation.tr("Invalid mode. Use: safe, interactive, full"), Ai.interfaceRole);
+                }
+            }
+        },
+        {
+            name: "project",
+            description: Translation.tr("Set project directory for Claude Code file access"),
+            execute: args => {
+                if (!Ai.currentApiStrategy?.projectDir && Ai.currentApiStrategy?.projectDir !== "") {
+                    Ai.addMessage(Translation.tr("Project directory is only available for Claude Code model"), Ai.interfaceRole);
+                    return;
+                }
+                const path = args.join(" ").trim();
+                if (path.length === 0 || path === "get") {
+                    const currentDir = Ai.getProjectDir();
+                    if (currentDir && currentDir.length > 0) {
+                        Ai.addMessage(Translation.tr("Current project directory: `%1`\n\nUse `/project <path>` to change").arg(currentDir), Ai.interfaceRole);
+                    } else {
+                        Ai.addMessage(Translation.tr("No project directory set.\n\nUse `/project <path>` to set one, e.g.:\n`/project /home/user/myproject`"), Ai.interfaceRole);
+                    }
+                    return;
+                }
+                Ai.setProjectDir(path);
+                Ai.addMessage(Translation.tr("Project directory set to: `%1`").arg(path), Ai.interfaceRole);
+            }
+        },
+        {
+            name: "turns",
+            description: Translation.tr("Set max turns limit for Claude Code (prevents infinite loops)"),
+            execute: args => {
+                if (!Ai.currentApiStrategy?.maxTurns && Ai.currentApiStrategy?.maxTurns !== 0) {
+                    Ai.addMessage(Translation.tr("Max turns is only available for Claude Code model"), Ai.interfaceRole);
+                    return;
+                }
+                if (args.length === 0 || args[0] === "get") {
+                    Ai.addMessage(Translation.tr("Current max turns: **%1**\n\nUse `/turns <number>` to change").arg(Ai.currentApiStrategy.maxTurns), Ai.interfaceRole);
+                    return;
+                }
+                const turns = parseInt(args[0]);
+                if (!isNaN(turns) && turns > 0 && turns <= 100) {
+                    Ai.currentApiStrategy.maxTurns = turns;
+                    Ai.addMessage(Translation.tr("Max turns set to: **%1**").arg(turns), Ai.interfaceRole);
+                } else {
+                    Ai.addMessage(Translation.tr("Invalid value. Max turns must be between 1 and 100"), Ai.interfaceRole);
+                }
+            }
+        },
     ]
 
     function handleInput(inputText) {
@@ -360,6 +425,44 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                         icon: "payments"
                         statusText: "$" + (Ai.currentApiStrategy?.totalCost ?? 0).toFixed(4)
                         description: Translation.tr("Session cost (USD)\nThis session: $%1").arg((Ai.currentApiStrategy?.sessionCost ?? 0).toFixed(4))
+                    }
+                    // Claude Code tool mode indicator
+                    StatusSeparator {
+                        visible: Ai.models[Ai.currentModelId]?.api_format === "claude"
+                    }
+                    StatusItem {
+                        visible: Ai.models[Ai.currentModelId]?.api_format === "claude"
+                        icon: {
+                            const mode = Ai.currentApiStrategy?.toolMode ?? "safe";
+                            if (mode === "safe") return "shield";
+                            if (mode === "interactive") return "touch_app";
+                            return "bolt";
+                        }
+                        statusText: (Ai.currentApiStrategy?.toolMode ?? "safe").charAt(0).toUpperCase() + (Ai.currentApiStrategy?.toolMode ?? "safe").slice(1)
+                        description: Translation.tr("Tool mode: %1\nClick to cycle, or use /mode").arg(Ai.currentApiStrategy?.toolMode ?? "safe")
+                        onClicked: {
+                            // Cycle through modes
+                            const modes = ["safe", "interactive", "full"];
+                            const current = Ai.currentApiStrategy?.toolMode ?? "safe";
+                            const idx = (modes.indexOf(current) + 1) % modes.length;
+                            if (Ai.currentApiStrategy) {
+                                Ai.currentApiStrategy.toolMode = modes[idx];
+                            }
+                        }
+                    }
+                    // Pending approvals indicator
+                    StatusSeparator {
+                        visible: Ai.toolApprovalService?.hasPending ?? false
+                    }
+                    StatusItem {
+                        visible: Ai.toolApprovalService?.hasPending ?? false
+                        icon: "pending_actions"
+                        statusText: (Ai.toolApprovalService?.pendingCount ?? 0).toString()
+                        description: Translation.tr("Pending tool approvals\nClick to scroll to them")
+                        onClicked: {
+                            // Scroll to bottom to see pending approvals
+                            messageListView.positionViewAtEnd();
+                        }
                     }
                 }
             }
@@ -708,23 +811,36 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                     }
                 }
 
-                RippleButton { // Send button
+                RippleButton { // Send/Abort button
                     id: sendButton
                     Layout.alignment: Qt.AlignTop
                     Layout.rightMargin: 5
                     implicitWidth: 40
                     implicitHeight: 40
                     buttonRadius: Appearance.rounding.small
-                    enabled: messageInputField.text.length > 0
+
+                    // Show abort when running, send otherwise
+                    property bool isRunning: Ai.isRunning
+                    enabled: isRunning || messageInputField.text.length > 0
                     toggled: enabled
+
+                    // Different colors for abort mode
+                    colBackground: isRunning ? Appearance.colors.colErrorContainer : (enabled ? Appearance.colors.colPrimary : Appearance.colors.colSurfaceContainerHighest)
+                    colBackgroundHover: isRunning ? Appearance.colors.colError : Appearance.colors.colPrimaryHover
 
                     MouseArea {
                         anchors.fill: parent
                         cursorShape: sendButton.enabled ? Qt.PointingHandCursor : Qt.ArrowCursor
                         onClicked: {
-                            const inputText = messageInputField.text;
-                            root.handleInput(inputText);
-                            messageInputField.clear();
+                            if (sendButton.isRunning) {
+                                // Abort current operation
+                                Ai.abortCurrentOperation();
+                            } else {
+                                // Send message
+                                const inputText = messageInputField.text;
+                                root.handleInput(inputText);
+                                messageInputField.clear();
+                            }
                         }
                     }
 
@@ -732,8 +848,16 @@ Inline w/ backslash and round brackets \\(e^{i\\pi} + 1 = 0\\)
                         anchors.centerIn: parent
                         horizontalAlignment: Text.AlignHCenter
                         iconSize: 22
-                        color: sendButton.enabled ? Appearance.m3colors.m3onPrimary : Appearance.colors.colOnLayer2Disabled
-                        text: "arrow_upward"
+                        color: sendButton.isRunning
+                            ? Appearance.colors.colOnErrorContainer
+                            : (sendButton.enabled ? Appearance.m3colors.m3onPrimary : Appearance.colors.colOnLayer2Disabled)
+                        text: sendButton.isRunning ? "stop" : "arrow_upward"
+                    }
+
+                    StyledToolTip {
+                        text: sendButton.isRunning
+                            ? Translation.tr("Abort operation")
+                            : Translation.tr("Send message")
                     }
                 }
             }

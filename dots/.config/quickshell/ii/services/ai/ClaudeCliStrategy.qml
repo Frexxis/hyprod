@@ -40,6 +40,21 @@ ApiStrategy {
     // Thinking block state
     property bool isThinking: false
 
+    // Current content block type for proper stop handling
+    property string currentBlockType: ""
+
+    // Tool mode: "safe", "interactive", "full"
+    property string toolMode: "safe"
+
+    // Project directory for file access
+    property string projectDir: ""
+
+    // Max turns limit (prevents infinite loops)
+    property int maxTurns: 20
+
+    // Show tool activity in UI
+    property bool showToolActivity: true
+
     // Helper: Escape string for bash single quotes
     function escapeForBash(str) {
         // Replace single quotes with '\'' (end quote, escaped quote, start quote)
@@ -59,16 +74,41 @@ ApiStrategy {
         // Build prompt: include system prompt only for new conversations
         const prompt = sessionId ? lastMsg : (systemPrompt ? systemPrompt + "\n\n" + lastMsg : lastMsg);
 
-        // Escape for bash
-        const escapedPrompt = escapeForBash(prompt);
-
-        // Build command with environment variable for safe prompt passing
+        // Build command
         let cmdParts = [];
         cmdParts.push(cliPath);
         cmdParts.push("-p");
         cmdParts.push(prompt);
         cmdParts.push("--output-format");
         cmdParts.push("stream-json");
+
+        // Tool mode kontrolü - hangi araçlara izin verilecek
+        if (toolMode === "safe") {
+            // Sadece okuma işlemleri - güvenli
+            // NOT: mcp__* wildcard kaldırıldı - güvenlik riski
+            cmdParts.push("--allowedTools");
+            cmdParts.push("Read,Glob,Grep,WebSearch,WebFetch,Task,LS,TodoRead");
+        } else if (toolMode === "interactive") {
+            // Tüm araçlar açık - hook script onay ister
+            // Hook PreToolUse event'inde tehlikeli araçları yakalar
+            // Hiçbir --allowedTools kısıtlaması yok
+        } else if (toolMode === "full") {
+            // Tüm araçlar - onay olmadan
+            cmdParts.push("--dangerously-skip-permissions");
+        }
+        // Default: hiçbir flag eklenmez, Claude kendi varsayılanlarını kullanır
+
+        // Proje dizini - Claude'un dosya erişimi için
+        if (projectDir && projectDir.length > 0) {
+            cmdParts.push("--add-dir");
+            cmdParts.push(projectDir);
+        }
+
+        // Max turns - sonsuz döngü koruması
+        if (maxTurns > 0) {
+            cmdParts.push("--max-turns");
+            cmdParts.push(maxTurns.toString());
+        }
 
         // Resume session if we have a session ID
         if (sessionId) {
@@ -115,12 +155,24 @@ ApiStrategy {
                     return {};
 
                 case "content_block_start":
+                    // Track current block type for proper stop handling
+                    currentBlockType = dataJson.content_block?.type || "";
+
                     // Handle thinking blocks
-                    if (dataJson.content_block?.type === "thinking") {
+                    if (currentBlockType === "thinking") {
                         isThinking = true;
                         const startBlock = "\n\n<think>\n\n";
                         message.content += startBlock;
                         message.rawContent += startBlock;
+                    }
+                    // Handle tool use blocks
+                    else if (currentBlockType === "tool_use") {
+                        return {
+                            toolUseStart: {
+                                id: dataJson.content_block.id,
+                                name: dataJson.content_block.name
+                            }
+                        };
                     }
                     return {};
 
@@ -131,8 +183,12 @@ ApiStrategy {
                     } else if (dataJson.delta?.type === "text_delta") {
                         text = dataJson.delta.text || "";
                     } else if (dataJson.delta?.type === "input_json_delta") {
-                        // Tool input streaming - could display if needed
-                        return {};
+                        // Tool input streaming - accumulate for display
+                        return {
+                            toolInputDelta: {
+                                partial_json: dataJson.delta.partial_json || ""
+                            }
+                        };
                     }
 
                     if (text) {
@@ -148,6 +204,48 @@ ApiStrategy {
                         const endBlock = "\n\n</think>\n\n";
                         message.content += endBlock;
                         message.rawContent += endBlock;
+                    }
+
+                    // Signal tool use complete only if we were in a tool_use block
+                    const wasToolUse = currentBlockType === "tool_use";
+                    currentBlockType = "";  // Reset block type
+
+                    if (wasToolUse) {
+                        return { toolUseStop: true };
+                    }
+                    return {};
+
+                case "assistant":
+                    // Assistant message with potential tool_use blocks
+                    if (dataJson.message?.content) {
+                        for (const block of dataJson.message.content) {
+                            if (block.type === "tool_use") {
+                                return {
+                                    toolUse: {
+                                        id: block.id,
+                                        name: block.name,
+                                        input: block.input
+                                    }
+                                };
+                            }
+                        }
+                    }
+                    return {};
+
+                case "user":
+                    // User message with tool_result blocks
+                    if (dataJson.message?.content) {
+                        for (const block of dataJson.message.content) {
+                            if (block.type === "tool_result") {
+                                return {
+                                    toolResult: {
+                                        toolUseId: block.tool_use_id,
+                                        content: typeof block.content === "string" ? block.content : JSON.stringify(block.content),
+                                        isError: block.is_error || false
+                                    }
+                                };
+                            }
+                        }
                     }
                     return {};
 
@@ -210,6 +308,7 @@ ApiStrategy {
     function reset() {
         // Reset thinking state, but keep session for multi-turn
         isThinking = false;
+        currentBlockType = "";
         sessionCost = 0.0;
         // Note: sessionId is preserved across messages in the same conversation
         // Call clearSession() explicitly to start a new conversation

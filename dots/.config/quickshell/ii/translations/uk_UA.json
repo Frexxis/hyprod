@@ -323,5 +323,21 @@
   "Install zoxide to enable this tab": "Встановіть zoxide, щоб увімкнути цю вкладку",
   "Staged: %1": "Індексовано: %1",
   "Label is required": "Мітка обов'язкова",
-  "Search projects": "Пошук проектів"
+  "Search projects": "Пошук проектів",
+  "Pending": "Очікування",
+  "Running": "Виконується",
+  "Error": "Помилка",
+  "Rejected": "Відхилено",
+  "Approved": "Схвалено",
+  "File: %1": "Файл: %1",
+  "Editing: %1": "Редагування: %1",
+  "Writing: %1": "Запис: %1",
+  "Command: %1": "Команда: %1",
+  "Pattern: %1": "Шаблон: %1",
+  "Query: %1": "Запит: %1",
+  "URL: %1": "URL: %1",
+  "Operation aborted": "Операцію скасовано",
+  "Operation aborted by user": "Операцію скасовано користувачем",
+  "Abort operation": "Скасувати операцію",
+  "Pending tool approvals\nClick to scroll to them": "Очікуючі підтвердження інструментів\nНатисніть, щоб перейти до них"
 }

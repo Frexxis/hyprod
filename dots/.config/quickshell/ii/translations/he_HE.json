@@ -496,5 +496,21 @@
   "Install zoxide to enable this tab": "התקן את zoxide כדי להפעיל לשונית זו",
   "Staged: %1": "ב-stage: %1",
   "Label is required": "נדרשת תווית",
-  "Search projects": "חפש פרויקטים"
+  "Search projects": "חפש פרויקטים",
+  "Pending": "ממתין",
+  "Running": "פועל",
+  "Error": "שגיאה",
+  "Rejected": "נדחה",
+  "Approved": "אושר",
+  "File: %1": "קובץ: %1",
+  "Editing: %1": "עריכה: %1",
+  "Writing: %1": "כתיבה: %1",
+  "Command: %1": "פקודה: %1",
+  "Pattern: %1": "תבנית: %1",
+  "Query: %1": "שאילתה: %1",
+  "URL: %1": "כתובת: %1",
+  "Operation aborted": "הפעולה בוטלה",
+  "Operation aborted by user": "הפעולה בוטלה על ידי המשתמש",
+  "Abort operation": "בטל פעולה",
+  "Pending tool approvals\nClick to scroll to them": "אישורי כלים ממתינים\nלחץ לגלול אליהם"
 }

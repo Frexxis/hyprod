@@ -18,6 +18,12 @@ import qs.services.ai
 Singleton {
     id: root
 
+    // Tool approval service for Claude Code hook-based approval
+    readonly property var toolApprovalService: ClaudeToolApprovalService
+
+    // Check if a request is currently running
+    readonly property bool isRunning: requester.running
+
     property Component aiMessageComponent: AiMessageData {}
     property Component aiModelComponent: AiModel {}
     property Component geminiApiStrategy: GeminiApiStrategy {}
@@ -657,6 +663,259 @@ Singleton {
         root.tokenCount.input = -1;
         root.tokenCount.output = -1;
         root.tokenCount.total = -1;
+        // Clear Claude Code session when chat is cleared
+        if (root.currentApiStrategy?.clearSession) {
+            root.currentApiStrategy.clearSession();
+        }
+    }
+
+    // === Claude Code Tool Handling ===
+
+    // Dangerous tools that require user approval in interactive mode
+    readonly property var dangerousTools: ["Edit", "Write", "Bash", "NotebookEdit", "MultiEdit"]
+
+    // Check if a tool needs user approval based on current mode
+    function toolNeedsApproval(toolName) {
+        const strategy = root.currentApiStrategy;
+        if (!strategy || strategy.toolMode !== "interactive") return false;
+        return root.dangerousTools.includes(toolName);
+    }
+
+    // Set project directory for Claude Code
+    function setProjectDir(path) {
+        if (root.currentApiStrategy && "projectDir" in root.currentApiStrategy) {
+            root.currentApiStrategy.projectDir = path;
+        }
+    }
+
+    // Get current project directory
+    function getProjectDir() {
+        return root.currentApiStrategy?.projectDir ?? "";
+    }
+
+    // Handle tool use start - add to message's toolUses array
+    function handleToolUseStart(message, toolUseStart) {
+        if (!message) return;
+
+        // Check if already exists (may have been added by hook first)
+        const existingIdx = message.toolUses.findIndex(t => t.id === toolUseStart.id);
+        if (existingIdx >= 0) {
+            // Update existing entry - keep status if it's "pending" (waiting for approval)
+            let updatedToolUses = [...message.toolUses];
+            const currentStatus = updatedToolUses[existingIdx].status;
+            updatedToolUses[existingIdx] = {
+                ...updatedToolUses[existingIdx],
+                name: toolUseStart.name,
+                // Only change to running if not pending (pending means waiting for approval)
+                status: currentStatus === "pending" ? "pending" : "running"
+            };
+            message.toolUses = updatedToolUses;
+        } else {
+            // Add new entry
+            const newToolUse = {
+                id: toolUseStart.id,
+                name: toolUseStart.name,
+                input: {},
+                status: "running",
+                result: null,
+                isError: false
+            };
+            message.toolUses = [...message.toolUses, newToolUse];
+        }
+        message.currentToolId = toolUseStart.id;
+        message.currentToolInput = "";
+    }
+
+    // Handle tool input delta - accumulate JSON
+    function handleToolInputDelta(message, inputDelta) {
+        if (!message || !message.currentToolId) return;
+        message.currentToolInput += inputDelta.partial_json || "";
+    }
+
+    // Handle tool use stop - parse accumulated input
+    function handleToolUseStop(message) {
+        if (!message || !message.currentToolId) return;
+
+        const idx = message.toolUses.findIndex(t => t.id === message.currentToolId);
+        if (idx >= 0) {
+            try {
+                const parsedInput = message.currentToolInput ? JSON.parse(message.currentToolInput) : {};
+                let updatedToolUses = [...message.toolUses];
+                updatedToolUses[idx] = {
+                    ...updatedToolUses[idx],
+                    input: parsedInput,
+                    status: toolNeedsApproval(updatedToolUses[idx].name) ? "pending" : "running"
+                };
+                message.toolUses = updatedToolUses;
+            } catch (e) {
+                console.warn("[Ai] Failed to parse tool input:", e);
+            }
+        }
+        message.currentToolId = "";
+        message.currentToolInput = "";
+    }
+
+    // Handle complete tool use event
+    function handleToolUse(message, toolUse) {
+        if (!message) return;
+
+        // Check if already exists
+        const existingIdx = message.toolUses.findIndex(t => t.id === toolUse.id);
+        if (existingIdx >= 0) {
+            // Update existing - preserve pending/approved status from hook system
+            let updatedToolUses = [...message.toolUses];
+            const currentStatus = updatedToolUses[existingIdx].status;
+            // Only update status if not already in an approval workflow state
+            const preserveStatus = currentStatus === "pending" || currentStatus === "approved" || currentStatus === "rejected";
+            updatedToolUses[existingIdx] = {
+                ...updatedToolUses[existingIdx],
+                input: toolUse.input,
+                status: preserveStatus ? currentStatus : (toolNeedsApproval(toolUse.name) ? "pending" : "running")
+            };
+            message.toolUses = updatedToolUses;
+        } else {
+            // Add new - check if in interactive mode with hooks
+            const isInteractive = root.currentApiStrategy?.toolMode === "interactive";
+            const newToolUse = {
+                id: toolUse.id,
+                name: toolUse.name,
+                input: toolUse.input,
+                // In interactive mode, hook system manages status; otherwise use local logic
+                status: isInteractive ? "running" : (toolNeedsApproval(toolUse.name) ? "pending" : "running"),
+                result: null,
+                isError: false
+            };
+            message.toolUses = [...message.toolUses, newToolUse];
+        }
+    }
+
+    // Handle tool result
+    function handleToolResult(message, toolResult) {
+        if (!message) return;
+
+        const idx = message.toolUses.findIndex(t => t.id === toolResult.toolUseId);
+        if (idx >= 0) {
+            let updatedToolUses = [...message.toolUses];
+            updatedToolUses[idx] = {
+                ...updatedToolUses[idx],
+                result: toolResult.content,
+                status: toolResult.isError ? "error" : "done",
+                isError: toolResult.isError
+            };
+            message.toolUses = updatedToolUses;
+        }
+    }
+
+    // Approve a pending tool use (for interactive mode)
+    function approveToolUse(messageId, toolUseId) {
+        const message = root.messageByID[messageId];
+        if (!message) return;
+
+        const idx = message.toolUses.findIndex(t => t.id === toolUseId);
+        if (idx >= 0 && message.toolUses[idx].status === "pending") {
+            let updatedToolUses = [...message.toolUses];
+            updatedToolUses[idx] = {
+                ...updatedToolUses[idx],
+                status: "approved"
+            };
+            message.toolUses = updatedToolUses;
+
+            // Notify the hook-based approval service to write response
+            if (root.toolApprovalService) {
+                root.toolApprovalService.approve(toolUseId);
+            }
+        }
+    }
+
+    // Reject a pending tool use
+    function rejectToolUse(messageId, toolUseId) {
+        const message = root.messageByID[messageId];
+        if (!message) return;
+
+        const idx = message.toolUses.findIndex(t => t.id === toolUseId);
+        if (idx >= 0 && message.toolUses[idx].status === "pending") {
+            let updatedToolUses = [...message.toolUses];
+            updatedToolUses[idx] = {
+                ...updatedToolUses[idx],
+                status: "rejected",
+                result: "Rejected by user"
+            };
+            message.toolUses = updatedToolUses;
+        }
+
+        // Also notify the hook-based approval service
+        if (root.toolApprovalService) {
+            root.toolApprovalService.reject(toolUseId);
+        }
+    }
+
+    // Abort current operation
+    function abortCurrentOperation() {
+        if (!requester.running) return;
+
+        // Send SIGTERM to the process
+        requester.signal(15); // SIGTERM
+
+        // Mark current message as done with abort indication
+        if (requester.message) {
+            requester.message.content += "\n\n**[" + Translation.tr("Operation aborted") + "]**";
+            requester.message.rawContent += "\n\n**[" + Translation.tr("Operation aborted") + "]**";
+            requester.message.done = true;
+        }
+
+        // Reject all pending tool approvals
+        if (root.toolApprovalService) {
+            root.toolApprovalService.rejectAll();
+        }
+
+        // Add interface message
+        root.addMessage(Translation.tr("Operation aborted by user"), root.interfaceRole);
+    }
+
+    // Connection to tool approval service for hook-based approvals
+    Connections {
+        target: root.toolApprovalService
+        enabled: root.currentApiStrategy?.toolMode === "interactive"
+
+        function onApprovalRequested(approval) {
+            // Add pending tool to current message's toolUses
+            if (requester.message) {
+                const existingIdx = requester.message.toolUses.findIndex(t => t.id === approval.id);
+                if (existingIdx < 0) {
+                    requester.message.toolUses = [...requester.message.toolUses, {
+                        id: approval.id,
+                        name: approval.toolName,
+                        input: approval.toolInput,
+                        status: "pending",
+                        result: null,
+                        isError: false
+                    }];
+                } else {
+                    // Update status to pending
+                    let updatedToolUses = [...requester.message.toolUses];
+                    updatedToolUses[existingIdx] = {
+                        ...updatedToolUses[existingIdx],
+                        status: "pending"
+                    };
+                    requester.message.toolUses = updatedToolUses;
+                }
+            }
+        }
+
+        function onApprovalCompleted(id, approved) {
+            // Update tool status in current message
+            if (requester.message) {
+                const idx = requester.message.toolUses.findIndex(t => t.id === id);
+                if (idx >= 0) {
+                    let updatedToolUses = [...requester.message.toolUses];
+                    updatedToolUses[idx] = {
+                        ...updatedToolUses[idx],
+                        status: approved ? "approved" : "rejected"
+                    };
+                    requester.message.toolUses = updatedToolUses;
+                }
+            }
+        }
     }
 
     FileView {
@@ -787,10 +1046,28 @@ Singleton {
                         root.tokenCount.output = result.tokenUsage.output;
                         root.tokenCount.total = result.tokenUsage.total;
                     }
+
+                    // Claude Code tool handling
+                    if (result.toolUseStart) {
+                        root.handleToolUseStart(requester.message, result.toolUseStart);
+                    }
+                    if (result.toolInputDelta) {
+                        root.handleToolInputDelta(requester.message, result.toolInputDelta);
+                    }
+                    if (result.toolUseStop) {
+                        root.handleToolUseStop(requester.message);
+                    }
+                    if (result.toolUse) {
+                        root.handleToolUse(requester.message, result.toolUse);
+                    }
+                    if (result.toolResult) {
+                        root.handleToolResult(requester.message, result.toolResult);
+                    }
+
                     if (result.finished) {
                         requester.markDone();
                     }
-                    
+
                 } catch (e) {
                     console.log("[AI] Could not parse response: ", e);
                     requester.message.rawContent += data;

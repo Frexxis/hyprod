@@ -370,5 +370,21 @@
   "Install zoxide to enable this tab": "Установите zoxide для включения этой вкладки",
   "Staged: %1": "В индексе: %1",
   "Label is required": "Требуется метка",
-  "Search projects": "Поиск проектов"
+  "Search projects": "Поиск проектов",
+  "Pending": "Ожидание",
+  "Running": "Выполняется",
+  "Error": "Ошибка",
+  "Rejected": "Отклонено",
+  "Approved": "Одобрено",
+  "File: %1": "Файл: %1",
+  "Editing: %1": "Редактирование: %1",
+  "Writing: %1": "Запись: %1",
+  "Command: %1": "Команда: %1",
+  "Pattern: %1": "Шаблон: %1",
+  "Query: %1": "Запрос: %1",
+  "URL: %1": "URL: %1",
+  "Operation aborted": "Операция прервана",
+  "Operation aborted by user": "Операция прервана пользователем",
+  "Abort operation": "Прервать операцию",
+  "Pending tool approvals\nClick to scroll to them": "Ожидающие подтверждения инструментов\nНажмите, чтобы перейти к ним"
 }
