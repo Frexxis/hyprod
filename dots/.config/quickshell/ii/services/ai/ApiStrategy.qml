@@ -15,4 +15,5 @@ QtObject {
     // Direct CLI execution support (for Claude Code CLI)
     function usesDirectExecution(): bool { return false } // Override in strategies that use direct CLI
     function buildCommand(model: AiModel, messages, systemPrompt: string, temperature: real, tools: list<var>, filePath: string): list<string> { return [] }
+    function supportsPtyWrapper(): bool { return false }
 }

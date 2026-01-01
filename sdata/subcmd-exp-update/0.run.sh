@@ -655,7 +655,7 @@ build_packages() {
 
     if makepkg -si --noconfirm; then
       log_success "Successfully built and installed $pkg_name"
-      ((rebuilt_packages++))
+      ((++rebuilt_packages))
     else
       log_error "Failed to build package $pkg_name"
     fi

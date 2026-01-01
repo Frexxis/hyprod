@@ -21,6 +21,13 @@ Singleton {
 
     readonly property bool hasSnapshots: snapshots.length > 0
 
+    Component.onDestruction: {
+        // Stop all processes to prevent leaks
+        checkTimeshiftProc.running = false;
+        listSnapshotsProc.running = false;
+        createProc.running = false;
+    }
+
     function refresh() {
         if (!root.available) return;
         if (listSnapshotsProc.running) return;

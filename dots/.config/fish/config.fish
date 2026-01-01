@@ -22,5 +22,13 @@ if status is-interactive # Commands to run in interactive sessions can go here
     alias ls 'eza --icons'
     alias clear "printf '\033[2J\033[3J\033[1;1H'"
     alias q 'qs -c ii'
-    
+
+    # Load NVM and auto-use default version
+    # Note: PATH is automatically added by conf.d/hyprod-paths.fish
+    if type -q nvm
+        if set -q nvm_default_version
+            nvm use --silent $nvm_default_version 2>/dev/null
+        end
+    end
+
 end

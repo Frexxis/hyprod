@@ -3,7 +3,7 @@ set -euo pipefail
 
 MODE="${1:-type}"
 
-emoji="$(sed '1,/^### DATA ###$/d' "$0" | fuzzel --match-mode fzf --dmenu | cut -d ' ' -f 1 | tr -d '\n')"
+emoji="$(sed -n '1,/^### DATA ###$/d; /^EMOJI_DATA$/q; p' "$0" | fuzzel --match-mode fzf --dmenu | cut -d ' ' -f 1 | tr -d '\n')"
 
 case "$MODE" in
     type)

@@ -15,8 +15,7 @@ Item {
         {"icon": "neurology", "name": Translation.tr("Intelligence")},
         {"icon": "account_tree", "name": Translation.tr("Git")},
         {"icon": "folder_open", "name": Translation.tr("Projects")},
-        {"icon": "terminal", "name": Translation.tr("Commands")},
-        {"icon": "monitoring", "name": Translation.tr("System")}
+        {"icon": "terminal", "name": Translation.tr("Commands")}
     ]
     property int tabCount: swipeView.count
 
@@ -89,9 +88,6 @@ Item {
                     }),
                     quickCommands.createObject(null, {
                         "active": Qt.binding(() => swipeView.currentIndex === 3 && GlobalStates.sidebarLeftOpen)
-                    }),
-                    systemMonitor.createObject(null, {
-                        "active": Qt.binding(() => swipeView.currentIndex === 4 && GlobalStates.sidebarLeftOpen)
                     })
                 ]
             }
@@ -116,11 +112,5 @@ Item {
             id: quickCommands
             QuickCommands {}
         }
-
-        Component {
-            id: systemMonitor
-            SystemMonitor {}
-        }
-
     }
 }

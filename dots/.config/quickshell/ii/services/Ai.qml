@@ -23,6 +23,8 @@ Singleton {
 
     // Check if a request is currently running
     readonly property bool isRunning: requester.running
+    // Toggle noisy AI logs for debugging
+    property bool debugAi: false
 
     property Component aiMessageComponent: AiMessageData {}
     property Component aiModelComponent: AiModel {}
@@ -240,9 +242,14 @@ Singleton {
             ],
             "search": [],
             "none": [],
+        },
+        "claude": {
+            "functions": [],
+            "search": [],
+            "none": [],
         }
     }
-    property list<var> availableTools: Object.keys(root.tools[models[currentModelId]?.api_format])
+    property list<var> availableTools: Object.keys(root.tools[models[currentModelId]?.api_format] ?? {})
     property var toolDescriptions: {
         "functions": Translation.tr("Commands, edit configs, search.\nTakes an extra turn to switch to search mode if that's needed"),
         "search": Translation.tr("Gives the model search capabilities (immediately)"),
@@ -923,6 +930,56 @@ Singleton {
         property list<string> baseCommand: ["bash"]
         property AiMessageData message
         property ApiStrategy currentStrategy
+        property bool usingPty: false
+        property bool pendingPtyRestart: false
+        property bool hadStdout: false
+        property bool enablePtyFallback: true
+        property int ptyFallbackDelayMs: 1500
+        property var lastCommandArgs: ({})
+
+        onRunningChanged: {
+            if (root.debugAi) {
+                console.log("[Ai] Process running changed to:", running);
+            }
+            if (running) {
+                hadStdout = false;
+                if (root.debugAi) {
+                    console.log("[Ai] Process started with command:", JSON.stringify(command));
+                }
+                if (enablePtyFallback && !usingPty && currentStrategy?.supportsPtyWrapper?.()) {
+                    ptyFallbackTimer.restart();
+                }
+            } else {
+                ptyFallbackTimer.stop();
+            }
+        }
+
+        function startDirectProcess(forcePty) {
+            const args = requester.lastCommandArgs;
+            if (!args || !args.model) return;
+            requester.pendingPtyRestart = false;
+            requester.usingPty = !!forcePty || requester.currentStrategy?.usePtyWrapper === true;
+            const cmd = requester.currentStrategy.buildCommand(
+                args.model, args.messages, args.systemPrompt,
+                args.temperature, args.tools, args.filePath, forcePty
+            );
+            if (root.debugAi) {
+                console.log("[Ai] Built command:", JSON.stringify(cmd));
+            }
+            // Check if command is valid
+            if (!cmd || cmd.length === 0 || !cmd[0]) {
+                if (root.debugAi) {
+                    console.log("[Ai] Command is invalid!");
+                }
+                root.addMessage(Translation.tr("Claude CLI is not ready. Please try again in a moment."), root.interfaceRole);
+                return;
+            }
+            requester.command = cmd;
+            if (root.debugAi) {
+                console.log("[Ai] Starting process with command:", cmd[0]);
+            }
+            requester.running = true;
+        }
 
         function markDone() {
             requester.message.done = true;
@@ -972,13 +1029,31 @@ Singleton {
 
             /* Check if strategy uses direct CLI execution (e.g., Claude Code CLI) */
             if (requester.currentStrategy.usesDirectExecution()) {
+                if (root.debugAi) {
+                    console.log("[Ai] Using direct CLI execution");
+                }
                 const toolsForRequest = root.tools[model.api_format]?.[root.currentTool] ?? [];
-                requester.command = requester.currentStrategy.buildCommand(
-                    model, filteredMessageArray, root.systemPrompt,
-                    root.temperature, toolsForRequest, root.pendingFilePath
-                );
+                const filePathForRequest = root.pendingFilePath;
                 root.pendingFilePath = "";
-                requester.running = true;
+                requester.lastCommandArgs = {
+                    "model": model,
+                    "messages": filteredMessageArray,
+                    "systemPrompt": root.systemPrompt,
+                    "temperature": root.temperature,
+                    "tools": toolsForRequest,
+                    "filePath": filePathForRequest,
+                };
+                if ("verboseOutput" in requester.currentStrategy) {
+                    requester.currentStrategy.verboseOutput = true;
+                }
+                if ("debugLogging" in requester.currentStrategy) {
+                    requester.currentStrategy.debugLogging = root.debugAi;
+                }
+                requester.environment["NO_COLOR"] = "1";
+                requester.environment["TERM"] = "dumb";
+                requester.environment["LC_ALL"] = "C";
+                requester.environment["LANG"] = "C";
+                requester.startDirectProcess(false);
                 return; // Skip curl script logic
             }
 
@@ -1023,15 +1098,24 @@ Singleton {
         }
 
         stdout: SplitParser {
+            splitMarker: "\n"
             onRead: data => {
                 if (data.length === 0) return;
+                if (!requester.hadStdout) {
+                    requester.hadStdout = true;
+                    ptyFallbackTimer.stop();
+                }
                 if (requester.message.thinking) requester.message.thinking = false;
-                // console.log("[Ai] Raw response line: ", data);
+                if (root.debugAi) {
+                    console.log("[Ai] Raw response line: ", data.substring(0, 200));
+                }
 
                 // Handle response line
                 try {
                     const result = requester.currentStrategy.parseResponseLine(data, requester.message);
-                    // console.log("[Ai] Parsed response result: ", JSON.stringify(result, null, 2));
+                    if (root.debugAi) {
+                        console.log("[Ai] Parsed result, message content length:", requester.message.content.length);
+                    }
 
                     if (result.functionCall) {
                         requester.message.functionCall = result.functionCall;
@@ -1065,16 +1149,44 @@ Singleton {
                     }
 
                 } catch (e) {
-                    console.log("[AI] Could not parse response: ", e);
+                    if (root.debugAi) {
+                        console.warn("[AI] Could not parse response: ", e);
+                    }
                     requester.message.rawContent += data;
                     requester.message.content += data;
                 }
             }
         }
 
+        stderr: SplitParser {
+            splitMarker: "\n"
+            onRead: data => {
+                if (data.length === 0) return;
+                console.warn("[Claude CLI stderr]", data);
+                // Show error to user if it looks like an error message
+                if (data.toLowerCase().includes("error") || data.toLowerCase().includes("fatal") || data.toLowerCase().includes("failed")) {
+                    requester.message.content += "\n**CLI Error:** " + data;
+                    requester.message.rawContent += "\n**CLI Error:** " + data;
+                }
+            }
+        }
+
         onExited: (exitCode, exitStatus) => {
+            ptyFallbackTimer.stop();
+            if (requester.pendingPtyRestart) {
+                requester.pendingPtyRestart = false;
+                requester.hadStdout = false;
+                requester.startDirectProcess(true);
+                return;
+            }
+            if (root.debugAi || exitCode !== 0) {
+                console.log("[Ai] Process exited with code:", exitCode, "status:", exitStatus);
+            }
+            if (root.debugAi) {
+                console.log("[Ai] Message content length:", requester.message.content.length);
+            }
             const result = requester.currentStrategy.onRequestFinished(requester.message);
-            
+
             if (result.finished) {
                 requester.markDone();
             } else if (!requester.message.done) {
@@ -1085,6 +1197,26 @@ Singleton {
             if (requester.message.content.includes("API key not valid")) {
                 root.addApiKeyAdvice(models[requester.message.model]);
             }
+
+            // Handle non-zero exit code
+            if (exitCode !== 0 && requester.message.content.length === 0) {
+                requester.message.content = Translation.tr("Claude CLI exited with code %1. Check if claude is installed and working.").arg(exitCode);
+            }
+        }
+    }
+
+    Timer {
+        id: ptyFallbackTimer
+        interval: requester.ptyFallbackDelayMs
+        repeat: false
+        onTriggered: {
+            if (!requester.running || requester.hadStdout || requester.usingPty) return;
+            if (!requester.enablePtyFallback || !requester.currentStrategy?.supportsPtyWrapper?.()) return;
+            if (root.debugAi) {
+                console.log("[Ai] No stdout detected, restarting with PTY wrapper.");
+            }
+            requester.pendingPtyRestart = true;
+            requester.running = false;
         }
     }
 

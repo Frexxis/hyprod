@@ -21,6 +21,16 @@ Singleton {
 
     readonly property bool hasContainers: containers.length > 0
 
+    Component.onDestruction: {
+        // Stop all processes and timers to prevent leaks
+        refreshTimer.running = false;
+        checkDockerProc.running = false;
+        listContainersProc.running = false;
+        startProc.running = false;
+        stopProc.running = false;
+        restartProc.running = false;
+    }
+
     function refresh() {
         if (!root.available) return;
         if (listContainersProc.running) return;

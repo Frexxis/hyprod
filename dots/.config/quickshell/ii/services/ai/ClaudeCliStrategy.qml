@@ -1,11 +1,19 @@
 import QtQuick
+import Quickshell
 import Quickshell.Io
 
 ApiStrategy {
     id: root
 
-    // Claude CLI path - dynamically detected from PATH
-    property string cliPath: ""
+    // Claude CLI path - dynamically detected from PATH with fallback
+    property string cliPath: Quickshell.env("HOME") + "/.local/bin/claude"
+    property bool ready: cliPath.length > 0
+    // Force a PTY wrapper so the CLI streams stdout reliably when stdout is not a TTY
+    property bool usePtyWrapper: false
+    property string ptyWrapperCommand: "script"
+    // Required for stream-json output when using -p/--print
+    property bool verboseOutput: true
+    property bool debugLogging: false
 
     Component.onCompleted: {
         // Find claude in PATH using 'which' command
@@ -23,7 +31,7 @@ ApiStrategy {
                     root.cliPath = output;
                 } else {
                     // Fallback to common installation paths
-                    const home = Qt.getenv("HOME");
+                    const home = Quickshell.env("HOME");
                     root.cliPath = home + "/.local/bin/claude";
                 }
             }
@@ -61,26 +69,37 @@ ApiStrategy {
         return str.replace(/'/g, "'\\''");
     }
 
+    function shellQuote(arg) {
+        return "'" + escapeForBash(String(arg)) + "'";
+    }
+
     // Direct CLI execution - override from ApiStrategy
     function usesDirectExecution() {
         return true;
     }
 
+    function supportsPtyWrapper() {
+        return true;
+    }
+
     // Build the claude CLI command
-    function buildCommand(model, messages, systemPrompt, temperature, tools, filePath) {
+    function buildCommand(model, messages, systemPrompt, temperature, tools, filePath, forcePty) {
         // Get the last user message
         const lastMsg = messages.length > 0 ? messages[messages.length - 1].rawContent : "";
 
         // Build prompt: include system prompt only for new conversations
         const prompt = sessionId ? lastMsg : (systemPrompt ? systemPrompt + "\n\n" + lastMsg : lastMsg);
 
-        // Build command
+        // Build command - direct execution
         let cmdParts = [];
         cmdParts.push(cliPath);
         cmdParts.push("-p");
         cmdParts.push(prompt);
         cmdParts.push("--output-format");
         cmdParts.push("stream-json");
+        if (verboseOutput) {
+            cmdParts.push("--verbose");
+        }
 
         // Tool mode kontrolü - hangi araçlara izin verilecek
         if (toolMode === "safe") {
@@ -116,6 +135,11 @@ ApiStrategy {
             cmdParts.push(sessionId);
         }
 
+        if ((forcePty || usePtyWrapper) && ptyWrapperCommand && ptyWrapperCommand.length > 0) {
+            const cmdString = cmdParts.map(shellQuote).join(" ");
+            return [ptyWrapperCommand, "-q", "-c", cmdString, "/dev/null"];
+        }
+
         return cmdParts;
     }
 
@@ -136,10 +160,18 @@ ApiStrategy {
 
     // Parse NDJSON events from Claude CLI stream-json output
     function parseResponseLine(line, message) {
-        if (!line || line.trim().length === 0) return {};
+        if (!line) return {};
+        const trimmedLine = line.trim();
+        if (trimmedLine.length === 0) return {};
+        if (trimmedLine[0] !== "{") {
+            if (debugLogging) {
+                console.log("[ClaudeCliStrategy] Non-JSON line ignored:", trimmedLine);
+            }
+            return {};
+        }
 
         try {
-            const dataJson = JSON.parse(line);
+            const dataJson = JSON.parse(trimmedLine);
             const eventType = dataJson.type;
 
             switch (eventType) {
@@ -216,10 +248,19 @@ ApiStrategy {
                     return {};
 
                 case "assistant":
-                    // Assistant message with potential tool_use blocks
+                    // Assistant message with text and potential tool_use blocks
                     if (dataJson.message?.content) {
                         for (const block of dataJson.message.content) {
-                            if (block.type === "tool_use") {
+                            if (block.type === "text" && block.text) {
+                                // Add text content to message
+                                message.content += block.text;
+                                message.rawContent += block.text;
+                            } else if (block.type === "thinking" && block.thinking) {
+                                // Add thinking content
+                                const thinkContent = "\n\n<think>\n\n" + block.thinking + "\n\n</think>\n\n";
+                                message.content += thinkContent;
+                                message.rawContent += thinkContent;
+                            } else if (block.type === "tool_use") {
                                 return {
                                     toolUse: {
                                         id: block.id,
@@ -285,11 +326,15 @@ ApiStrategy {
 
                 default:
                     // Unknown event type - log but don't fail
-                    console.log("[ClaudeCliStrategy] Unknown event type:", eventType);
+                    if (debugLogging) {
+                        console.log("[ClaudeCliStrategy] Unknown event type:", eventType);
+                    }
                     return {};
             }
         } catch (e) {
-            console.warn("[ClaudeCliStrategy] Failed to parse line:", line, "Error:", e);
+            if (debugLogging) {
+                console.warn("[ClaudeCliStrategy] Failed to parse line:", line, "Error:", e);
+            }
             return {};
         }
     }

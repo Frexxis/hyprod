@@ -19,6 +19,12 @@ Singleton {
 
     readonly property bool refreshing: listProc.running
 
+    Component.onDestruction: {
+        // Stop all processes to prevent leaks
+        checkAvailabilityProc.running = false;
+        listProc.running = false;
+    }
+
     function refresh() {
         if (!root.available) {
             root.error = "zoxide is not installed";
