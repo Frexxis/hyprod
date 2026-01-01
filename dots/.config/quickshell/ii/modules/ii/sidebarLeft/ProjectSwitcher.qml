@@ -255,37 +255,37 @@ Item {
             }
 
             ActionButton {
-                icon: "terminal"
+                iconName: "terminal"
                 tooltip: Translation.tr("Open terminal")
                 onClicked: root.openTerminal(row.path)
             }
 
             ActionButton {
-                icon: "code"
+                iconName: "code"
                 tooltip: Translation.tr("Open in editor")
                 onClicked: root.openEditor(row.path)
             }
 
             ActionButton {
-                icon: "folder_open"
+                iconName: "folder_open"
                 tooltip: Translation.tr("Open in file manager")
                 onClicked: root.openFolder(row.path)
             }
 
             ActionButton {
-                icon: "content_copy"
+                iconName: "content_copy"
                 tooltip: Translation.tr("Copy path")
                 onClicked: root.copyPath(row.path)
             }
 
             ActionButton {
-                icon: row.favorite ? "star" : "star_border"
+                iconName: row.favorite ? "star" : "star_border"
                 tooltip: row.favorite ? Translation.tr("Unfavorite") : Translation.tr("Favorite")
                 onClicked: root.toggleFavorite(row.path)
             }
 
             ActionButton {
-                icon: "account_tree"
+                iconName: "account_tree"
                 tooltip: Translation.tr("Use for Git")
                 onClicked: root.setGitRepo(row.path)
             }
@@ -303,14 +303,14 @@ Item {
 
     component ActionButton: ToolbarButton {
         id: action
-        required property string icon
+        required property string iconName
         required property string tooltip
         implicitWidth: 30
         implicitHeight: 30
 
         contentItem: MaterialSymbol {
             anchors.centerIn: parent
-            text: action.icon
+            text: action.iconName
             iconSize: Appearance.font.pixelSize.larger
             color: Appearance.colors.colOnSurfaceVariant
             fill: 0

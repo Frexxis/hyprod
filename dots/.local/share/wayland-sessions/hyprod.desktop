@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=hyprod
+Comment=Developer-Focused Hyprland Rice
+Exec=start-hyprod
+TryExec=start-hyprod
+Type=Application
+DesktopNames=Hyprland
+Keywords=tiling;wayland;compositor;developer;

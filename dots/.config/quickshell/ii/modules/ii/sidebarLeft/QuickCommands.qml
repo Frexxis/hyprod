@@ -374,20 +374,20 @@ Item {
             }
 
             ActionButton {
-                icon: "play_arrow"
+                iconName: "play_arrow"
                 tooltip: Translation.tr("Run")
                 onClicked: root.runCommand(row.entry, false)
             }
 
             ActionButton {
-                icon: "terminal"
+                iconName: "terminal"
                 tooltip: Translation.tr("Run in terminal")
                 onClicked: root.runCommand(row.entry, true)
             }
 
             ActionButton {
                 visible: row.entry.type === "command"
-                icon: "delete"
+                iconName: "delete"
                 tooltip: Translation.tr("Delete")
                 onClicked: root.deleteCommand(row.entry.index)
             }
@@ -396,14 +396,14 @@ Item {
 
     component ActionButton: ToolbarButton {
         id: action
-        required property string icon
+        required property string iconName
         required property string tooltip
         implicitWidth: 30
         implicitHeight: 30
 
         contentItem: MaterialSymbol {
             anchors.centerIn: parent
-            text: action.icon
+            text: action.iconName
             iconSize: Appearance.font.pixelSize.larger
             color: Appearance.colors.colOnSurfaceVariant
             fill: 0

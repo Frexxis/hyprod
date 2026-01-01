@@ -199,14 +199,14 @@ Item {
 
                         ActionButton {
                             visible: hasUnstaged
-                            icon: "add"
+                            iconName: "add"
                             tooltip: Translation.tr("Stage")
                             onClicked: Git.stage(modelData.path)
                         }
 
                         ActionButton {
                             visible: hasStaged
-                            icon: "remove"
+                            iconName: "remove"
                             tooltip: Translation.tr("Unstage")
                             onClicked: Git.unstage(modelData.path)
                         }
@@ -374,7 +374,7 @@ Item {
 
     component ActionButton: ToolbarButton {
         id: action
-        required property string icon
+        required property string iconName
         required property string tooltip
 
         Layout.fillHeight: false
@@ -383,7 +383,7 @@ Item {
 
         contentItem: MaterialSymbol {
             anchors.centerIn: parent
-            text: action.icon
+            text: action.iconName
             iconSize: Appearance.font.pixelSize.larger
             color: action.enabled ? Appearance.colors.colOnSurfaceVariant : Appearance.m3colors.m3outline
             fill: 0

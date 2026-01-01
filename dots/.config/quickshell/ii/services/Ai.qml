@@ -75,7 +75,7 @@ Singleton {
 
     property list<var> defaultPrompts: []
     property list<var> userPrompts: []
-    property list<var> promptFiles: [...defaultPrompts, ...userPrompts]
+    property list<var> promptFiles: defaultPrompts.concat(userPrompts)
     property list<var> savedChats: []
 
     property var promptSubstitutions: {
@@ -375,6 +375,10 @@ Singleton {
     property ApiStrategy currentApiStrategy: apiStrategies[models[currentModelId]?.api_format || "openai"]
 
     Component.onDestruction: {
+        // Stop processes
+        const processes = [getOllamaModels, getDefaultPrompts, getUserPrompts, getSavedChats];
+        processes.forEach(p => { if(p) p.running = false; });
+
         // Destroy API strategies
         const strategies = Object.values(apiStrategies || {});
         strategies.forEach(strategy => {
@@ -449,7 +453,7 @@ Singleton {
                 try {
                     if (data.length === 0) return;
                     const dataJson = JSON.parse(data);
-                    root.modelList = [...root.modelList, ...dataJson];
+                    root.modelList = root.modelList.concat(dataJson);
                     dataJson.forEach(model => {
                         const safeModelName = root.safeModelName(model);
                         root.addModel(safeModelName, {
@@ -544,7 +548,7 @@ Singleton {
             "done": true,
         });
         const id = idForMessage(aiMessage);
-        root.messageIDs = [...root.messageIDs, id];
+        root.messageIDs = root.messageIDs.concat([id]);
         root.messageByID[id] = aiMessage;
     }
 
@@ -553,7 +557,7 @@ Singleton {
         const id = root.messageIDs[index];
         const message = root.messageByID[id];
         root.messageIDs.splice(index, 1);
-        root.messageIDs = [...root.messageIDs];
+        root.messageIDs = root.messageIDs.slice();
         delete root.messageByID[id];
         if (message) message.destroy();
     }
@@ -701,14 +705,13 @@ Singleton {
         const existingIdx = message.toolUses.findIndex(t => t.id === toolUseStart.id);
         if (existingIdx >= 0) {
             // Update existing entry - keep status if it's "pending" (waiting for approval)
-            let updatedToolUses = [...message.toolUses];
+            let updatedToolUses = message.toolUses.slice();
             const currentStatus = updatedToolUses[existingIdx].status;
-            updatedToolUses[existingIdx] = {
-                ...updatedToolUses[existingIdx],
+            updatedToolUses[existingIdx] = Object.assign({}, updatedToolUses[existingIdx], {
                 name: toolUseStart.name,
                 // Only change to running if not pending (pending means waiting for approval)
                 status: currentStatus === "pending" ? "pending" : "running"
-            };
+            });
             message.toolUses = updatedToolUses;
         } else {
             // Add new entry
@@ -720,7 +723,7 @@ Singleton {
                 result: null,
                 isError: false
             };
-            message.toolUses = [...message.toolUses, newToolUse];
+            let temp = message.toolUses.slice(); temp.push(newToolUse); message.toolUses = temp;
         }
         message.currentToolId = toolUseStart.id;
         message.currentToolInput = "";
@@ -740,12 +743,11 @@ Singleton {
         if (idx >= 0) {
             try {
                 const parsedInput = message.currentToolInput ? JSON.parse(message.currentToolInput) : {};
-                let updatedToolUses = [...message.toolUses];
-                updatedToolUses[idx] = {
-                    ...updatedToolUses[idx],
+                let updatedToolUses = message.toolUses.slice();
+                updatedToolUses[idx] = Object.assign({}, updatedToolUses[idx], {
                     input: parsedInput,
                     status: toolNeedsApproval(updatedToolUses[idx].name) ? "pending" : "running"
-                };
+                });
                 message.toolUses = updatedToolUses;
             } catch (e) {
                 console.warn("[Ai] Failed to parse tool input:", e);
@@ -763,15 +765,14 @@ Singleton {
         const existingIdx = message.toolUses.findIndex(t => t.id === toolUse.id);
         if (existingIdx >= 0) {
             // Update existing - preserve pending/approved status from hook system
-            let updatedToolUses = [...message.toolUses];
+            let updatedToolUses = message.toolUses.slice();
             const currentStatus = updatedToolUses[existingIdx].status;
             // Only update status if not already in an approval workflow state
             const preserveStatus = currentStatus === "pending" || currentStatus === "approved" || currentStatus === "rejected";
-            updatedToolUses[existingIdx] = {
-                ...updatedToolUses[existingIdx],
+            updatedToolUses[existingIdx] = Object.assign({}, updatedToolUses[existingIdx], {
                 input: toolUse.input,
                 status: preserveStatus ? currentStatus : (toolNeedsApproval(toolUse.name) ? "pending" : "running")
-            };
+            });
             message.toolUses = updatedToolUses;
         } else {
             // Add new - check if in interactive mode with hooks
@@ -785,7 +786,7 @@ Singleton {
                 result: null,
                 isError: false
             };
-            message.toolUses = [...message.toolUses, newToolUse];
+            message.toolUses = message.toolUses.concat([newToolUse]);
         }
     }
 
@@ -795,13 +796,12 @@ Singleton {
 
         const idx = message.toolUses.findIndex(t => t.id === toolResult.toolUseId);
         if (idx >= 0) {
-            let updatedToolUses = [...message.toolUses];
-            updatedToolUses[idx] = {
-                ...updatedToolUses[idx],
+            let updatedToolUses = message.toolUses.slice();
+            updatedToolUses[idx] = Object.assign({}, updatedToolUses[idx], {
                 result: toolResult.content,
                 status: toolResult.isError ? "error" : "done",
                 isError: toolResult.isError
-            };
+            });
             message.toolUses = updatedToolUses;
         }
     }
@@ -813,11 +813,10 @@ Singleton {
 
         const idx = message.toolUses.findIndex(t => t.id === toolUseId);
         if (idx >= 0 && message.toolUses[idx].status === "pending") {
-            let updatedToolUses = [...message.toolUses];
-            updatedToolUses[idx] = {
-                ...updatedToolUses[idx],
+            let updatedToolUses = message.toolUses.slice();
+            updatedToolUses[idx] = Object.assign({}, updatedToolUses[idx], {
                 status: "approved"
-            };
+            });
             message.toolUses = updatedToolUses;
 
             // Notify the hook-based approval service to write response
@@ -834,12 +833,11 @@ Singleton {
 
         const idx = message.toolUses.findIndex(t => t.id === toolUseId);
         if (idx >= 0 && message.toolUses[idx].status === "pending") {
-            let updatedToolUses = [...message.toolUses];
-            updatedToolUses[idx] = {
-                ...updatedToolUses[idx],
+            let updatedToolUses = message.toolUses.slice();
+            updatedToolUses[idx] = Object.assign({}, updatedToolUses[idx], {
                 status: "rejected",
                 result: "Rejected by user"
-            };
+            });
             message.toolUses = updatedToolUses;
         }
 
@@ -882,21 +880,20 @@ Singleton {
             if (requester.message) {
                 const existingIdx = requester.message.toolUses.findIndex(t => t.id === approval.id);
                 if (existingIdx < 0) {
-                    requester.message.toolUses = [...requester.message.toolUses, {
+                    requester.message.toolUses = requester.message.toolUses.concat([{
                         id: approval.id,
                         name: approval.toolName,
                         input: approval.toolInput,
                         status: "pending",
                         result: null,
                         isError: false
-                    }];
+                    }]);
                 } else {
                     // Update status to pending
-                    let updatedToolUses = [...requester.message.toolUses];
-                    updatedToolUses[existingIdx] = {
-                        ...updatedToolUses[existingIdx],
+                    let updatedToolUses = requester.message.toolUses.slice();
+                    updatedToolUses[existingIdx] = Object.assign({}, updatedToolUses[existingIdx], {
                         status: "pending"
-                    };
+                    });
                     requester.message.toolUses = updatedToolUses;
                 }
             }
@@ -907,11 +904,10 @@ Singleton {
             if (requester.message) {
                 const idx = requester.message.toolUses.findIndex(t => t.id === id);
                 if (idx >= 0) {
-                    let updatedToolUses = [...requester.message.toolUses];
-                    updatedToolUses[idx] = {
-                        ...updatedToolUses[idx],
+                    let updatedToolUses = requester.message.toolUses.slice();
+                    updatedToolUses[idx] = Object.assign({}, updatedToolUses[idx], {
                         status: approved ? "approved" : "rejected"
-                    };
+                    });
                     requester.message.toolUses = updatedToolUses;
                 }
             }
@@ -971,7 +967,7 @@ Singleton {
                 "done": false,
             });
             const id = idForMessage(requester.message);
-            root.messageIDs = [...root.messageIDs, id];
+            root.messageIDs = root.messageIDs.concat([id]);
             root.messageByID[id] = requester.message;
 
             /* Check if strategy uses direct CLI execution (e.g., Claude Code CLI) */
@@ -1130,7 +1126,7 @@ Singleton {
     function addFunctionOutputMessage(name, output) {
         const aiMessage = createFunctionOutputMessage(name, output);
         const id = idForMessage(aiMessage);
-        root.messageIDs = [...root.messageIDs, id];
+        root.messageIDs = root.messageIDs.concat([id]);
         root.messageByID[id] = aiMessage;
     }
 
@@ -1146,7 +1142,7 @@ Singleton {
 
         const responseMessage = createFunctionOutputMessage(message.functionName, "", false);
         const id = idForMessage(responseMessage);
-        root.messageIDs = [...root.messageIDs, id];
+        root.messageIDs = root.messageIDs.concat([id]);
         root.messageByID[id] = responseMessage;
 
         commandExecutionProc.message = responseMessage;

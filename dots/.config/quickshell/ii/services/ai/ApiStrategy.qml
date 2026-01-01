@@ -1,6 +1,8 @@
 import QtQuick
 
 QtObject {
+    default property list<QtObject> data
+
     function buildEndpoint(model: AiModel): string { throw new Error("Not implemented") }
     function buildRequestData(model: AiModel, messages, systemPrompt: string, temperature: real, tools: list<var>, filePath: string) { throw new Error("Not implemented") }
     function buildAuthorizationHeader(apiKeyEnvVarName: string): string { throw new Error("Not implemented") }

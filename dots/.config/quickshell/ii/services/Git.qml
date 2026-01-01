@@ -294,4 +294,8 @@ Singleton {
             root.diffContent = diffCollector.text;
         }
     }
+    Component.onDestruction: {
+         const processes = [checkAvailabilityProc, checkRepoProc, statusProc, logProc, stageProc, unstageProc, commitProc, diffProc];
+         processes.forEach(p => { if(p) p.running = false; });
+    }
 }

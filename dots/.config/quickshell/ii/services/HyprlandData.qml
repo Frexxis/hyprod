@@ -173,4 +173,13 @@ Singleton {
             }
         }
     }
+
+    Component.onDestruction: {
+        debounceTimer.stop();
+        getClients.running = false;
+        getMonitors.running = false;
+        getLayers.running = false;
+        getWorkspaces.running = false;
+        getActiveWorkspace.running = false;
+    }
 }
